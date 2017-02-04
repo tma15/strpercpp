@@ -27,19 +27,6 @@ void StructuredPerceptron::set_template(const std::vector<FeatureTemplate>& tmpl
 }
 
 void StructuredPerceptron::read_template(const char* filename) {
-
-//    std::ifstream ifs(filename);
-
-//    if (ifs.fail()) {
-//        std::cerr << "failed to open " << filename << std::endl;
-//    }
-
-//    std::string line;
-//    while (ifs && getline(ifs, line)) {
-//        FeatureTemplate t;
-//        t.read(line);
-//        this->tmpl.push_back(t);
-//    }
     this->tmpl = read_template_file(filename);
 };
 
@@ -109,7 +96,7 @@ void StructuredPerceptron::update(const std::vector< std::shared_ptr< Node > >& 
         std::shared_ptr<Node> n = true_path[i];
         for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
             int fid = *it;
-            w.add(n->Y, fid, 1.);
+            this->w(n->Y, fid) += 1.;
         }
     }
 
@@ -117,7 +104,7 @@ void StructuredPerceptron::update(const std::vector< std::shared_ptr< Node > >& 
         std::shared_ptr<Node> n = pred_path[i];
         for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
             int fid = *it;
-            w.add(n->Y, fid, -1.);
+            this->w(n->Y, fid) -= 1.;
         }
     }
 };

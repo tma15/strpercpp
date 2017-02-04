@@ -11,14 +11,13 @@ class Matrix {
     public:
         Matrix();
         Matrix(int row, int col);
+        float& operator() (int i, int j);
+
         std::vector<float> operator[] (int row);
-        void add(int row, int col, float val);
         void reshape(int row, int col);
         std::vector<int> shape();
         void save(FILE* fp);
         void load(FILE* fp);
-//        std::vector<float>* operator[] (int row);
-//        void operator+ (float val);
 };
 
 #endif

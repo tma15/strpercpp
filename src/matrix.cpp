@@ -11,15 +11,13 @@ Matrix::Matrix(int row, int col) {
     this->matrix_ = std::vector< std::vector<float> >(row, std::vector<float>(col, 0.));
 };
 
-//std::vector<float>* Matrix::operator[] (int row) {
+float& Matrix::operator() (int i, int j) {
+    return this->matrix_[i][j];
+}
+
 std::vector<float> Matrix::operator[] (int row) {
-//    return &this->matrix_[row];
     return this->matrix_[row];
 };
-
-void Matrix::add(int row, int col, float val) {
-    this->matrix_[row][col] += val;
-}
 
 std::vector<int> Matrix::shape() {
     int r = this->matrix_.size();
