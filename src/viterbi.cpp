@@ -26,7 +26,8 @@ void viterbi(std::vector< std::shared_ptr<Node> >& nodes) {
             }
 
             curr_node->prev = best_node;
-            curr_node->path_score += best_score;
+//            curr_node->path_score += best_score;
+            curr_node->path_score = best_score;
         }
     }
 };
