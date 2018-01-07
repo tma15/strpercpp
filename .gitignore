@@ -4,4 +4,6 @@ src/*.o
 src/*.lo
 src/*.la
 src/.*
+
 autom4te.cache
+ltmain.sh
