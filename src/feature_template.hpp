@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+namespace strpercpp {
+
 class FeatureTemplate {
     public:
         std::string prefix;
@@ -29,5 +31,7 @@ std::vector<int> extract_features(
         const std::vector< std::vector< std::string > >& x,
         const int pos,
         bool train);
+
+} // namespace strpercpp
 
 #endif

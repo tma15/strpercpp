@@ -2,6 +2,9 @@
 
 #include "matrix.hpp"
 
+namespace strpercpp {
+    
+
 Matrix::Matrix() {
 };
 
@@ -64,3 +67,5 @@ void Matrix::load(FILE* fp) {
         }
     }
 }
+
+} // namespace strpercpp

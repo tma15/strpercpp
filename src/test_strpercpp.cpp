@@ -6,6 +6,8 @@
 #include "feature_template.hpp"
 #include "structured_perceptron.hpp"
 
+using namespace strpercpp;
+
 void eval(
         std::string test_file,
         StructuredPerceptron& perc,

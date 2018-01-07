@@ -8,6 +8,9 @@
 #include "lattice.hpp"
 #include "viterbi.hpp"
 
+namespace strpercpp {
+    
+
 std::vector<std::string> split(std::string& line, char sep) {
     std::vector<std::string> ret;
     std::stringstream ss(line);
@@ -140,3 +143,5 @@ void Corpus::build_lattices(
     }
 
 };
+
+} // namespace strpercpp

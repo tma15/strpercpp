@@ -9,6 +9,9 @@
 #include "structured_perceptron.hpp"
 #include "viterbi.hpp"
 
+namespace strpercpp {
+    
+
 StructuredPerceptron::StructuredPerceptron() {
 };
 
@@ -191,3 +194,5 @@ void StructuredPerceptron::print_w() {
         }
     }
 };
+
+} // namespace strpercpp

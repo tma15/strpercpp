@@ -5,6 +5,9 @@
 #include "node.hpp"
 #include "viterbi.hpp"
 
+namespace strpercpp {
+    
+
 void viterbi(std::vector< std::shared_ptr<Node> >& nodes) {
     for (int i=1; i < nodes.size(); ++i) {
         for (std::shared_ptr<Node> curr_node = nodes[i]; curr_node != NULL; curr_node = curr_node->bnext) {
@@ -26,7 +29,6 @@ void viterbi(std::vector< std::shared_ptr<Node> >& nodes) {
             }
 
             curr_node->prev = best_node;
-//            curr_node->path_score += best_score;
             curr_node->path_score = best_score;
         }
     }
@@ -77,3 +79,4 @@ std::vector< std::shared_ptr< Node > > true_path(
     return path;
 };
 
+} // namespace strpercpp

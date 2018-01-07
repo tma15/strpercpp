@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace strpercpp {
+
 class Matrix {
     private:
         int col_;
@@ -19,5 +21,7 @@ class Matrix {
         void save(FILE* fp);
         void load(FILE* fp);
 };
+
+}
 
 #endif

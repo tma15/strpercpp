@@ -1,9 +1,11 @@
 #ifndef STRPERCPP_DICTIONARY_H
 #define STRPERCPP_DICTIONARY_H
-//#include <fstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+namespace strpercpp {
+    
 
 class Dictionary {
     private:
@@ -21,5 +23,7 @@ class Dictionary {
         void load(const char* filename);
         void load(FILE* fp);
 };
+
+} // namespace strpercpp
 
 #endif

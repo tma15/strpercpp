@@ -1,6 +1,9 @@
 #include "dictionary.hpp"
 #include "util.hpp"
 
+namespace strpercpp {
+    
+
 Dictionary::Dictionary() {
 };
 
@@ -60,3 +63,5 @@ void Dictionary::load(FILE* fp) {
     }
 
 }
+
+} // namespace strpercpp

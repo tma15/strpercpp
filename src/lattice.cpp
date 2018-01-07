@@ -3,6 +3,9 @@
 #include "lattice.hpp"
 #include "corpus.hpp"
 
+namespace strpercpp {
+    
+
 std::vector< std::shared_ptr< Node > > build_lattice(
         int label_size,
         const std::vector< std::vector< int > >& feature_ids) {
@@ -38,3 +41,4 @@ std::vector< std::shared_ptr< Node > > build_lattice(
     return nodes;
 };
 
+} // namespace strpercpp

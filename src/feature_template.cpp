@@ -9,6 +9,8 @@
 #include "feature_template.hpp"
 #include "util.hpp"
 
+namespace strpercpp {
+    
 
 FeatureTemplate::FeatureTemplate() {
     
@@ -174,3 +176,4 @@ std::vector<int> extract_features(
     return features;
 };
 
+} // namespace strpercpp

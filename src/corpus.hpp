@@ -8,6 +8,8 @@
 #include "dictionary.hpp"
 #include "feature_template.hpp"
 
+namespace strpercpp {
+
 namespace corpus {
 
 const std::string BOS = "_BOS_";
@@ -44,5 +46,7 @@ class Corpus {
                 std::vector< std::vector< std::shared_ptr< Node > > >* true_path_list,
                 bool train);
 };
+
+} // namespace strpercpp
 
 #endif

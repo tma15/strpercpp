@@ -7,6 +7,8 @@
 #include "matrix.hpp"
 #include "node.hpp"
 
+namespace strpercpp {
+    
 
 class StructuredPerceptron {
     private:
@@ -58,4 +60,6 @@ class StructuredPerceptron {
 
         void print_w();
 };
+
+} // namespace strpercpp
 #endif
