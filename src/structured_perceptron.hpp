@@ -1,3 +1,8 @@
+///
+/// \file structured_perceptron.hpp
+/// \author Takuya Makino
+/// \date 2018/01/08
+///
 #ifndef STRPERCPP_STRUCTUREDPERCEPTRON_H
 #define STRPERCPP_STRUCTUREDPERCEPTRON_H
 #include <memory>
@@ -8,57 +13,124 @@
 #include "node.hpp"
 
 namespace strpercpp {
-    
 
+
+/*! @class StructuredPerceptron
+ *  @brief StructuredPerceptron supports APIs for training a model and predicting of a
+ *  given input.
+ */
 class StructuredPerceptron {
     private:
-        std::string BOS;
-        std::string EOS;
-        Dictionary label_dic;
+      /*! the beggining of a sentence */
+      std::string BOS;
 
-        Dictionary feature_dic;
+      /*! the end of a sentence */
+      std::string EOS;
 
-        // (label_size, feature_size) matrix
-        Matrix w;
+      /*! the dictionary of labels */
+      Dictionary label_dic;
 
-        Matrix w_a;
+      /*! the dictionary of features */
+      Dictionary feature_dic;
 
-        void fire(std::shared_ptr<Node> node);
+      /*! weight vector */
+      Matrix w;
+
+      /*! calculates the score of a given node.
+       * \param[in] node a node of which score is calculated.
+      */
+      void fire(std::shared_ptr<Node> node);
 
     public:
-        std::vector<FeatureTemplate> tmpl;
+      /*! templates of features */
+      std::vector<FeatureTemplate> tmpl;
 
-        StructuredPerceptron();
-        ~StructuredPerceptron(){};
-        StructuredPerceptron(Dictionary& feature_dic, Dictionary& label_dic);
+      StructuredPerceptron();
+      ~StructuredPerceptron(){};
+      StructuredPerceptron(Dictionary& feature_dic, Dictionary& label_dic);
 
-        Dictionary get_feature_dic() { return this->feature_dic; };
-        Dictionary get_label_dic() { return this->label_dic; };
+      /*! gets the dictionary of features
+       * \param[out] feature_dic Dictionary of features
+       */
+      Dictionary get_feature_dic() { return this->feature_dic; };
 
-        void read_template(const char* filename);
-        void set_template(const std::vector<FeatureTemplate>& tmpl);
+      /*! gets the dictionary of features 
+       * \param[out] label_dic Dictionary of labels
+       */
+      Dictionary get_label_dic() { return this->label_dic; };
 
-        void fit(std::vector< std::shared_ptr< Node > >& nodes,
-                std::vector< std::shared_ptr< Node > >& true_path_);
+      /*! reads the template file of features
+       * \param[in] filename the filename of a feature template
+       */
+      void read_template(const char* filename);
 
-        void fit(std::vector< std::shared_ptr< Node > >& nodes,
-                const std::vector< std::string >& labels);
+      /*! sets feature templates
+       * \param[in] tmpls list of feature template
+       */
+      void set_template(const std::vector<FeatureTemplate>& tmpls);
 
-        void fit( const std::vector< std::vector< int > >& feature_ids_list,
-                const std::vector< std::string >& labels);
+      /*! learns a model
+       * \param[in] nodes lattice of Node s
+       * \param[in] true_path_ true path of Node s
+       */
+      void fit(std::vector< std::shared_ptr< Node > >& nodes,
+              std::vector< std::shared_ptr< Node > >& true_path_);
 
-        void update(const std::vector< std::shared_ptr<Node> >& true_path,
-                const std::vector< std::shared_ptr< Node > >& pred_path);
+      /*! learns a model
+       * \param[in] nodes lattice of Node s
+       * \param[in] labels the sequence of true labels
+       */
+      void fit(std::vector< std::shared_ptr< Node > >& nodes,
+              const std::vector< std::string >& labels);
 
-        std::vector< std::shared_ptr<Node> > predict(const std::vector< std::vector< int > >& feature_ids);
+      /*! learns a model
+       * \param[in] feature_ids_list list of feature indice
+       * \param[in] labels the sequence of true labels
+       */
+      void fit( const std::vector< std::vector< int > >& feature_ids_list,
+              const std::vector< std::string >& labels);
 
-        std::vector< std::shared_ptr<Node> > predict(std::vector< std::shared_ptr<Node> >& nodes);
+      /*! updates weight vector
+       * \param[in] true_path the sequence of true labels
+       * \param[in] pred_path the sequence of predicted labels
+       */
+      void update(const std::vector< std::shared_ptr<Node> >& true_path,
+              const std::vector< std::shared_ptr< Node > >& pred_path);
 
-        std::vector< std::shared_ptr<Node> > predict(const std::vector< std::vector<std::string> >& sequence);
-        void save(const char* filename);
-        void load(const char* filename);
+      /*! updates weight vector
+       * \param[in] feature_ids the sequence of feature indice
+       * \param[out] nodes the sequence of nodes that hold labels
+       */
+      std::vector< std::shared_ptr<Node> >
+      predict(const std::vector< std::vector< int > >& feature_ids);
 
-        void print_w();
+      /*! updates weight vector
+       * \param[in] nodes the lattice of nodes
+       * \param[out] nodes the sequence of nodes that hold labels
+       */
+      std::vector< std::shared_ptr<Node> >
+      predict(std::vector< std::shared_ptr<Node> >& nodes);
+
+      /*! updates weight vector
+       * \param[in] sequence the sequence of features
+       * \param[out] nodes the sequence of nodes that hold labels
+       */
+      std::vector< std::shared_ptr<Node> >
+      predict(const std::vector< std::vector<std::string> >& sequence);
+
+      /*! save learned model
+       * \param[in] filename the file name of output
+       */
+      void save(const char* filename);
+
+      /*! load learned model
+       * \param[in] filename the file name of learned model
+       */
+      void load(const char* filename);
+
+      /*! print weight vector
+       */
+      void print_w();
 };
 
 } // namespace strpercpp
