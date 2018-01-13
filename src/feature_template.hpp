@@ -1,3 +1,6 @@
+/// \file feature_template.hpp
+/// \author Takuya Makino
+/// \date 2018/01/13
 #ifndef STRPERCPP_FEATURETEMPLATE_H
 #define STRPERCPP_FEATURETEMPLATE_H
 
@@ -6,31 +9,46 @@
 
 namespace strpercpp {
 
+/*! @class FeatureTemplate
+ *  @brief FeatureTemplate extracts feature information from template file.
+ */
 class FeatureTemplate {
-    public:
-        std::string prefix;
-        std::vector<int> rel_pos;
-        std::vector<int> feature_type;
+  public:
+    /*! prefix of feature such as U */
+    std::string prefix;
 
-        FeatureTemplate();
+    /*! relative positions of features */
+    std::vector<int> rel_pos;
 
-        size_t size();
+    /*! types of feature */
+    std::vector<int> feature_type;
 
-        void read(std::string& line);
+    FeatureTemplate();
 
-        void save(FILE* fp);
+    size_t size();
 
-        void load(FILE* fp);
+    void read(std::string& line);
+
+    /*! saves feature tempalte from a file
+     * \param[in] fp file object
+     */
+    void save(FILE* fp);
+
+    /*! loads feature tempalte from a file
+     * \param[in] fp file object
+     */
+    void load(FILE* fp);
 };
 
+/*! read all feature templates from a file */
 std::vector<FeatureTemplate> read_template_file(const char* filename);
 
 std::vector<int> extract_features(
-        const std::vector<FeatureTemplate>& tmpl,
-        Dictionary* feature_dic,
-        const std::vector< std::vector< std::string > >& x,
-        const int pos,
-        bool train);
+  const std::vector<FeatureTemplate>& tmpl,
+  Dictionary* feature_dic,
+  const std::vector< std::vector< std::string > >& x,
+  const int pos,
+  bool train);
 
 } // namespace strpercpp
 

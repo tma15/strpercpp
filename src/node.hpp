@@ -1,3 +1,6 @@
+/// \file node.hpp
+/// \author Takuya Makino
+/// \date 2018/01/13
 #ifndef STRPERCPP_NODE_H
 #define STRPERCPP_NODE_H
 
@@ -6,33 +9,38 @@
 #include <memory>
 #include <vector>
 
+namespace strpercpp {
+  
+/*! @class Node
+ *  @brief Node represents a node in lattice.
+ */
 class Node {
-    public:
+  public:
+    /*! feature indice on the node */
+    std::vector<int> feature_ids;
 
-//        std::vector<std::string> features;
-        std::vector<int> feature_ids;
-//        std::unordered_set<int> fids;
-        int Y;
-        std::string label;
+    /*! label index */
+    int Y;
 
-//        Node* prev;
-        std::shared_ptr<Node> prev;
-//        Node* next;
+    /*! label */
+    std::string label;
 
-//        Node* bnext;
-        std::shared_ptr<Node> bnext;
-//        Node* enext;
+    /*! the pointer to previous node */
+    std::shared_ptr<Node> prev;
 
-        float score;
-        float path_score;
+    /*! the pointer to next node */
+    std::shared_ptr<Node> bnext;
 
-        Node();
-        ~Node(){
-//            std::cout << "Free " << Y << std::endl;
-        };
+    /*! the score of the node */
+    float score;
 
-//        void add_bnext(Node& node);
+    /*! the cumulative score of the node from the start of lattice */
+    float path_score;
+
+    Node();
+    ~Node(){};
 };
 
+} // namespace strpercpp
 
 #endif
