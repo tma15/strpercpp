@@ -19,13 +19,15 @@ make install
 ```
 
 ## Example
+### Data preparation
 ```sh
 git clone https://github.com/neubig/nlptutorial.git ~/nlpdata
 python scripts/convert_data_format.py < ~/nlptutorial/data/wiki-en-train.norm_pos > ./convert_data_format.py > train.data
 python scripts/convert_data_format.py < ~/nlptutorial/data/wiki-en-test.norm_pos > test.data
 ```
 
+### Training and evaluation
 ```sh
-train_strpercpp train.data template model
+train_strpercpp -e 3 train.data template model
 test_strpercpp model test.data
 ```
