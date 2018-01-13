@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
         usage();
         exit(0);
       case 'e':
-        epoch = atof(optarg);
+        epoch = atoi(optarg);
         break;
     }
   }
