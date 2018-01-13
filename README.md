@@ -1,7 +1,7 @@
 # strperc++
 A C++ implementation of structured perceptron
 
-## install
+## Install
 ```sh
 autoreconf -iv
 ./configure --prefix=/path/to/install
@@ -9,7 +9,7 @@ make
 make install
 ```
 
-## data format
+## Data format
 ```
 <FEATURE_1>[SPACE]<FEATURE_2>[SPACE] …  [SPACE]<LABEL>
 <FEATURE_1>[SPACE]<FEATURE_2>[SPACE] …  [SPACE]<LABEL>
@@ -18,11 +18,11 @@ make install
 
 ```
 
-## example
+## Example
 ```sh
 git clone https://github.com/neubig/nlptutorial.git ~/nlpdata
-python convert_data_format.py < ~/nlptutorial/data/wiki-en-train.norm_pos > ./convert_data_format.py > train.data
-python convert_data_format.py < ~/nlptutorial/data/wiki-en-test.norm_pos > test.data
+python scripts/convert_data_format.py < ~/nlptutorial/data/wiki-en-train.norm_pos > ./convert_data_format.py > train.data
+python scripts/convert_data_format.py < ~/nlptutorial/data/wiki-en-test.norm_pos > test.data
 ```
 
 ```sh
