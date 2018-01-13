@@ -6,33 +6,24 @@
 #include <memory>
 #include <vector>
 
+namespace strpercpp {
+  
 class Node {
-    public:
+  public:
+    std::vector<int> feature_ids;
+    int Y;
+    std::string label;
 
-//        std::vector<std::string> features;
-        std::vector<int> feature_ids;
-//        std::unordered_set<int> fids;
-        int Y;
-        std::string label;
+    std::shared_ptr<Node> prev;
+    std::shared_ptr<Node> bnext;
 
-//        Node* prev;
-        std::shared_ptr<Node> prev;
-//        Node* next;
+    float score;
+    float path_score;
 
-//        Node* bnext;
-        std::shared_ptr<Node> bnext;
-//        Node* enext;
-
-        float score;
-        float path_score;
-
-        Node();
-        ~Node(){
-//            std::cout << "Free " << Y << std::endl;
-        };
-
-//        void add_bnext(Node& node);
+    Node();
+    ~Node(){};
 };
 
+} // namespace strpercpp
 
 #endif
