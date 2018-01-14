@@ -75,6 +75,8 @@ class StructuredPerceptron {
        */
       void fit(std::vector< std::shared_ptr< Node > >& nodes,
               std::vector< std::shared_ptr< Node > >& true_path_);
+      void early_update(std::vector< std::shared_ptr< Node > >& nodes,
+              std::vector< std::shared_ptr< Node > >& true_path_);
 
       /*! learns a model
        * \param[in] nodes lattice of Node s
