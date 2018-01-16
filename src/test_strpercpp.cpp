@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <unistd.h>
+
 #include "iostream"
 #include "string"
 
@@ -13,7 +16,8 @@ void eval(
       StructuredPerceptron& perc,
       Dictionary& feature_dic,
       Dictionary& label_dic,
-      std::vector<FeatureTemplate>& tmpl) {
+      std::vector<FeatureTemplate>& tmpl,
+      bool verbose) {
 
   std::vector< std::vector< std::vector< std::string > > > sequences;
   std::vector< std::vector< std::string > > labels;
@@ -49,9 +53,11 @@ void eval(
 
       std::string labe = label_dic.gets(y[j]->Y);
 
-      std::cout << sequences[i][j][0] << "\t";
-      std::cout << labels[i][j] << "\t";
-      std::cout << labe << std::endl;
+      if (verbose) {
+        std::cout << sequences[i][j][0] << "\t";
+        std::cout << labels[i][j] << "\t";
+        std::cout << labe << std::endl;
+      }
 
       if (labe == labels[i][j]) {
         n_correct_tok += 1;
@@ -64,7 +70,9 @@ void eval(
     if (is_correct) {
       n_correct_sent += 1;
     }
-    std::cout << std::endl;
+    if (verbose) {
+      std::cout << std::endl;
+    }
   }
   std::cout << n_correct_tok << "/" << n_tok << std::endl;
   std::cout << n_correct_sent << "/" << n_sent << std::endl;
@@ -72,8 +80,24 @@ void eval(
 };
 
 int main(int argc, char* argv[]) {
-  char* model_file = argv[1];
-  std::string test_file = argv[2];
+  int result;
+  bool verbose = false;
+
+  while ((result=getopt(argc, argv, "v")) != -1) {
+    switch (result) {
+      case 'v':
+        verbose = true;
+        break;
+    }
+  }
+
+  int i = optind;
+  char* model_file = argv[i];
+  i += 1;
+  std::string test_file = argv[i];
+
+//  char* model_file = argv[1];
+//  std::string test_file = argv[2];
 
   StructuredPerceptron perc;
   perc.load(model_file);
@@ -82,7 +106,7 @@ int main(int argc, char* argv[]) {
   Dictionary feature_dic = perc.get_feature_dic();
   std::vector<FeatureTemplate> tmpl = perc.tmpl;
 
-  eval(test_file, perc, feature_dic, label_dic, tmpl);
+  eval(test_file, perc, feature_dic, label_dic, tmpl, verbose);
 
   return 0;
 }
