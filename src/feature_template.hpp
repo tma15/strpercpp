@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "dictionary.hpp"
+
 namespace strpercpp {
 
 /*! @class FeatureTemplate
