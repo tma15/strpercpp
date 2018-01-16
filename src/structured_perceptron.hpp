@@ -52,17 +52,15 @@ class StructuredPerceptron {
        * \param[in] nodes lattice of Node s
        * \param[in] true_path_ true path of Node s
        */
-      void fit(std::vector< std::shared_ptr< Node > >& nodes,
-              std::vector< std::shared_ptr< Node > >& true_path_);
-      void early_update(std::vector< std::shared_ptr< Node > >& nodes,
-              std::vector< std::shared_ptr< Node > >& true_path_);
+      void fit(std::vector< node_ptr >& nodes, std::vector< node_ptr >& true_path_);
+
+      void early_update(std::vector< node_ptr >& nodes, std::vector< node_ptr >& true_path_);
 
       /*! learns a model
        * \param[in] nodes lattice of Node s
        * \param[in] labels the sequence of true labels
        */
-      void fit(std::vector< std::shared_ptr< Node > >& nodes,
-              const std::vector< std::string >& labels);
+      void fit(std::vector< node_ptr >& nodes, const std::vector< std::string >& labels);
 
       /*! learns a model
        * \param[in] feature_ids_list list of feature indice
@@ -75,28 +73,28 @@ class StructuredPerceptron {
        * \param[in] true_path the sequence of true labels
        * \param[in] pred_path the sequence of predicted labels
        */
-      void update(const std::vector< std::shared_ptr<Node> >& true_path,
-              const std::vector< std::shared_ptr< Node > >& pred_path);
+      void update(const std::vector< node_ptr >& true_path,
+              const std::vector< node_ptr >& pred_path);
 
       /*! updates weight vector
        * \param[in] feature_ids the sequence of feature indice
        * \param[out] nodes the sequence of nodes that hold labels
        */
-      std::vector< std::shared_ptr<Node> >
+      std::vector< node_ptr >
       predict(const std::vector< std::vector< int > >& feature_ids);
 
       /*! updates weight vector
        * \param[in] nodes the lattice of nodes
        * \param[out] nodes the sequence of nodes that hold labels
        */
-      std::vector< std::shared_ptr<Node> >
-      predict(std::vector< std::shared_ptr<Node> >& nodes);
+      std::vector< node_ptr >
+      predict(std::vector< node_ptr >& nodes);
 
       /*! updates weight vector
        * \param[in] sequence the sequence of features
        * \param[out] nodes the sequence of nodes that hold labels
        */
-      std::vector< std::shared_ptr<Node> >
+      std::vector< node_ptr >
       predict(const std::vector< std::vector<std::string> >& sequence);
 
       /*! save learned model
@@ -126,7 +124,7 @@ class StructuredPerceptron {
       /*! calculates the score of a given node.
        * \param[in] node a node of which score is calculated.
       */
-      void fire(std::shared_ptr<Node> node);
+      void fire(node_ptr node);
 };
 
 } // namespace strpercpp
