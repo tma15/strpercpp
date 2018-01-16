@@ -10,7 +10,18 @@ libstrpercpp_la_SOURCES = \
 	lattice.hpp lattice.cpp \
 	util.hpp util.cpp \
 	structured_perceptron.hpp structured_perceptron.cpp
-# libstrpercpp_CPPFLAGS = -std=c++0x -O3
+
+pkginclude_HEADERS = \
+	corpus.hpp \
+	dictionary.hpp \
+	feature_template.hpp \
+	lattice.hpp \
+	matrix.hpp \
+	node.hpp \
+	structured_perceptron.hpp \
+	util.hpp \
+	viterbi.hpp 
+
 
 bin_PROGRAMS = train_strpercpp test_strpercpp
 train_strpercpp_SOURCES = train_strpercpp.cpp
@@ -19,7 +30,4 @@ train_strpercpp_LDADD = libstrpercpp.la
 test_strpercpp_SOURCES = test_strpercpp.cpp
 test_strpercpp_LDADD = libstrpercpp.la
 
-# train_strpercpp_CPPFLAGS = -std=c++0x -O3
-
-# AM_CXXFLAGS = -g -pg
 AM_CXXFLAGS = -std=c++0x -O3
