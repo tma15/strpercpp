@@ -20,27 +20,6 @@ namespace strpercpp {
  *  given input.
  */
 class StructuredPerceptron {
-    private:
-      /*! the beggining of a sentence */
-      std::string BOS;
-
-      /*! the end of a sentence */
-      std::string EOS;
-
-      /*! the dictionary of labels */
-      Dictionary label_dic;
-
-      /*! the dictionary of features */
-      Dictionary feature_dic;
-
-      /*! weight vector */
-      Matrix w;
-
-      /*! calculates the score of a given node.
-       * \param[in] node a node of which score is calculated.
-      */
-      void fire(std::shared_ptr<Node> node);
-
     public:
       /*! templates of features */
       std::vector<FeatureTemplate> tmpl;
@@ -133,6 +112,21 @@ class StructuredPerceptron {
       /*! print weight vector
        */
       void print_w();
+
+    private:
+      /*! the dictionary of labels */
+      Dictionary label_dic;
+
+      /*! the dictionary of features */
+      Dictionary feature_dic;
+
+      /*! weight vector */
+      Matrix w;
+
+      /*! calculates the score of a given node.
+       * \param[in] node a node of which score is calculated.
+      */
+      void fire(std::shared_ptr<Node> node);
 };
 
 } // namespace strpercpp

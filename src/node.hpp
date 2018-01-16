@@ -41,6 +41,8 @@ class Node {
     ~Node(){};
 };
 
+typedef std::shared_ptr<Node> node_ptr;
+
 } // namespace strpercpp
 
 #endif
