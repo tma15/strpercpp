@@ -8,7 +8,6 @@
 #include <vector>
 
 namespace strpercpp {
-    
 
 
 /*! @class Dictionary
