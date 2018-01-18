@@ -49,8 +49,8 @@ class Corpus {
       const std::vector< std::vector< std::vector< std::string > > >& sequences,
       const std::vector< std::vector< std::string > >& labels,
       const std::vector< FeatureTemplate >& tmpl,
-      std::vector< std::vector< std::shared_ptr< Node > > >* nodes_list,
-      std::vector< std::vector< std::shared_ptr< Node > > >* true_path_list,
+      std::vector< std::vector< node_ptr > >* nodes_list,
+      std::vector< std::vector< node_ptr > >* true_path_list,
       bool train);
 };
 

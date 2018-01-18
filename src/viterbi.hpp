@@ -8,14 +8,12 @@
 namespace strpercpp {
     
 
-void viterbi(std::vector< std::shared_ptr<Node> >& nodes);
+void viterbi(std::vector<node_ptr>& nodes);
 
-std::vector< std::shared_ptr<Node> >
-backtrack(std::vector< std::shared_ptr< Node > >& nodes);
+std::vector<node_ptr> backtrack(std::vector<node_ptr>& nodes);
 
-std::vector< std::shared_ptr< Node > >
-true_path(std::vector< std::shared_ptr< Node > >& nodes,
-    const std::vector<int>& true_label_ids);
+std::vector<node_ptr>
+true_path(std::vector<node_ptr>& nodes, const std::vector<int>& true_label_ids);
 
 
 } // namespace strpercpp

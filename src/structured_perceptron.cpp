@@ -49,7 +49,7 @@ void StructuredPerceptron::fit(
         const std::vector< std::vector< int > >& feature_ids,
         const std::vector< std::string >& labels) {
 
-  std::vector< std::shared_ptr< Node> > nodes = build_lattice(this->label_dic.size(), feature_ids);
+  std::vector<node_ptr> nodes = build_lattice(this->label_dic.size(), feature_ids);
   this->fit(nodes, labels);
 };
 

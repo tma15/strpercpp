@@ -115,8 +115,8 @@ void Corpus::build_lattices(
     const std::vector< std::vector< std::vector< std::string > > >& sequences,
     const std::vector< std::vector< std::string > >& labels,
     const std::vector< FeatureTemplate >& tmpl,
-    std::vector< std::vector< std::shared_ptr< Node > > >* nodes_list,
-    std::vector< std::vector< std::shared_ptr< Node > > >* true_path_list,
+    std::vector< std::vector< node_ptr > >* nodes_list,
+    std::vector< std::vector< node_ptr > >* true_path_list,
     bool train) {
 
   int label_size = label_dict.size();
@@ -135,10 +135,10 @@ void Corpus::build_lattices(
       fids.push_back(features);
     }
 
-    std::vector< std::shared_ptr< Node > > nodes = build_lattice(label_size,
+    std::vector< node_ptr > nodes = build_lattice(label_size,
             fids);
 
-    std::vector< std::shared_ptr< Node > > true_path_ = true_path(nodes, yids);
+    std::vector< node_ptr > true_path_ = true_path(nodes, yids);
 
     nodes_list->push_back(nodes);
     true_path_list->push_back(true_path_);

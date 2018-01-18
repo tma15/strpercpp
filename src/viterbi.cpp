@@ -8,13 +8,13 @@
 namespace strpercpp {
     
 
-void viterbi(std::vector< std::shared_ptr<Node> >& nodes) {
+void viterbi(std::vector< node_ptr >& nodes) {
   for (int i=1; i < nodes.size(); ++i) {
-    for (std::shared_ptr<Node> curr_node = nodes[i]; curr_node != NULL; curr_node = curr_node->bnext) {
-      std::shared_ptr<Node> best_node;
+    for (node_ptr curr_node = nodes[i]; curr_node != NULL; curr_node = curr_node->bnext) {
+      node_ptr best_node;
       float best_score;
       bool is_new = true;
-      for (std::shared_ptr<Node> prev_node = nodes[i-1]; prev_node != NULL; prev_node = prev_node->bnext) {
+      for (node_ptr prev_node = nodes[i-1]; prev_node != NULL; prev_node = prev_node->bnext) {
         float score = prev_node->path_score + curr_node->score;
         if (score > best_score || is_new) {
           best_score = score;
@@ -35,16 +35,16 @@ void viterbi(std::vector< std::shared_ptr<Node> >& nodes) {
 };
 
 
-std::vector< std::shared_ptr< Node > > backtrack(std::vector< std::shared_ptr< Node > >& nodes) {
+std::vector< node_ptr > backtrack(std::vector< node_ptr >& nodes) {
   if (nodes.size() == 0) {
     std::cerr << "nodes.size()==0" << std::endl;
     exit(1);
   }
 
   int size_path = nodes.size() - 2;
-  std::vector< std::shared_ptr<Node> > path(size_path);
+  std::vector< node_ptr > path(size_path);
 
-  std::shared_ptr<Node> node = nodes[nodes.size()-1];
+  node_ptr node = nodes[nodes.size()-1];
   for (int i = size_path - 1; i >= 0; --i) {
     node = node.get()->prev;
     path[i] = node;
@@ -52,17 +52,17 @@ std::vector< std::shared_ptr< Node > > backtrack(std::vector< std::shared_ptr< N
   return path;
 };
 
-std::vector< std::shared_ptr< Node > >
-true_path(std::vector< std::shared_ptr< Node > >& nodes,
+std::vector< node_ptr >
+true_path(std::vector< node_ptr >& nodes,
     const std::vector<int>& true_label_ids) {
 
   int size_path = nodes.size() - 2;
-  std::vector< std::shared_ptr< Node > > path(size_path);
+  std::vector< node_ptr > path(size_path);
 
   for (int k=0; k < true_label_ids.size(); ++k) {
     int i = k + 1;
     bool found = false;
-    for (std::shared_ptr<Node> n = nodes[i]; n != NULL; n = n->bnext) {
+    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
       if (n.get()->Y == true_label_ids[i-1]) {
         path[i-1] = n;
         found = true;

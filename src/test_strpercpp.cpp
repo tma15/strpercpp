@@ -21,8 +21,8 @@ void eval(
 
   std::vector< std::vector< std::vector< std::string > > > sequences;
   std::vector< std::vector< std::string > > labels;
-  std::vector< std::vector< std::shared_ptr< Node > > > nodes_list;
-  std::vector< std::vector< std::shared_ptr< Node > > > true_path_list;
+  std::vector< std::vector< node_ptr > > nodes_list;
+  std::vector< std::vector< node_ptr > > true_path_list;
 
   Corpus corpus;
   bool train = false;
@@ -44,8 +44,8 @@ void eval(
   int n_correct_tok = 0;
   int n_tok = 0;
   for (int i=0; i < nodes_list.size(); ++i) {
-    std::vector< std::shared_ptr< Node > > nodes = nodes_list[i];
-    std::vector< std::shared_ptr< Node > > y = perc.predict(nodes);
+    std::vector< node_ptr > nodes = nodes_list[i];
+    std::vector< node_ptr > y = perc.predict(nodes);
 
     bool is_correct = true;
     for (int j=0; j < y.size(); ++j) {

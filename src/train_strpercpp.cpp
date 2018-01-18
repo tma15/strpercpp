@@ -48,8 +48,8 @@ int main(int argc, char* argv[]) {
 
   std::vector< std::vector< std::vector< std::string > > > sequences;
   std::vector< std::vector< std::string > > labels;
-  std::vector< std::vector< std::shared_ptr< Node > > > nodes_list;
-  std::vector< std::vector< std::shared_ptr< Node > > > true_path_list;
+  std::vector< std::vector< node_ptr > > nodes_list;
+  std::vector< std::vector< node_ptr > > true_path_list;
 
   std::vector<FeatureTemplate> tmpl = read_template_file(template_file);
   Corpus corpus;
@@ -74,8 +74,8 @@ int main(int argc, char* argv[]) {
   for (int e=0; e < epoch; ++e) {
     std::cout << "epoch:" << e+1 << "/" << epoch << std::endl;
     for (int i=0; i < nodes_list.size(); ++i) {
-      std::vector< std::shared_ptr< Node > > nodes = nodes_list[i];
-      std::vector< std::shared_ptr< Node > > true_path_ = true_path_list[i];
+      std::vector< node_ptr > nodes = nodes_list[i];
+      std::vector< node_ptr > true_path_ = true_path_list[i];
       perc.fit(nodes, true_path_);
 //      perc.early_update(nodes, true_path_);
     }
