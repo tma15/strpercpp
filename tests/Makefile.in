@@ -1,2 +1,2 @@
 test: test.cc
-	g++ -o test test.cc -L@prefix@/lib -I@prefix@/include -lstrpercpp
+	g++ -o test test.cc -L@prefix@/lib -I@prefix@/include -lstrpercpp -std=c++0x
