@@ -3,12 +3,9 @@
 #include "node.hpp"
 
 namespace strpercpp {
-Node::Node() {
-//  this->Y = 0;
-  this->Y = -1;
-  this->label = "";
-  this->score = 0.;
-  this->path_score = 0.;
+
+Node::Node(): Y(-1), label(""), score(0.), path_score(0.) {
 };
+
 
 } // namespace strpercpp

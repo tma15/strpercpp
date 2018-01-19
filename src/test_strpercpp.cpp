@@ -7,6 +7,7 @@
 #include "corpus.hpp"
 #include "dictionary.hpp"
 #include "feature_template.hpp"
+#include "lattice.hpp"
 #include "structured_perceptron.hpp"
 
 using namespace strpercpp;
@@ -17,7 +18,8 @@ void eval(
       Dictionary& feature_dic,
       Dictionary& label_dic,
       std::vector<FeatureTemplate>& tmpl,
-      bool verbose) {
+      bool verbose,
+      int beam_width) {
 
   std::vector< std::vector< std::vector< std::string > > > sequences;
   std::vector< std::vector< std::string > > labels;
@@ -44,22 +46,38 @@ void eval(
   int n_correct_tok = 0;
   int n_tok = 0;
   for (int i=0; i < nodes_list.size(); ++i) {
-    std::vector< node_ptr > nodes = nodes_list[i];
-    std::vector< node_ptr > y = perc.predict(nodes);
+    std::vector<node_ptr> nodes = nodes_list[i];
+
+    std::vector<node_ptr> yg = perc.predict(nodes);
+
+    std::vector<node_ptr> y = perc.nbest(nodes, beam_width);
+    node_ptr best = y[0];
+
+    int t = 0;
+    std::vector<node_ptr> b1(nodes.size()-2);
+    node_ptr n = best->prev;
+    for (int t=nodes.size()-2; t >= 1; --t) {
+      b1[t-1] = n;
+      n = n->prev;
+    }
 
     bool is_correct = true;
-    for (int j=0; j < y.size(); ++j) {
+//    for (int j=0; j < yg.size(); ++j) {
+//      int ilabel = yg[j]->Y;
+    for (int j=0; j < b1.size(); ++j) {
+      int ilabel = b1[j]->Y;
+
       n_tok += 1;
 
-      std::string labe = label_dic.gets(y[j]->Y);
+      std::string slabel = label_dic.gets(ilabel);
 
       if (verbose) {
         std::cout << sequences[i][j][0] << "\t";
         std::cout << labels[i][j] << "\t";
-        std::cout << labe << std::endl;
+        std::cout << slabel << std::endl;
       }
 
-      if (labe == labels[i][j]) {
+      if (slabel == labels[i][j]) {
         n_correct_tok += 1;
       } else {
         is_correct = false;
@@ -82,11 +100,15 @@ void eval(
 int main(int argc, char* argv[]) {
   int result;
   bool verbose = false;
+  int beam_width = 1;
 
-  while ((result=getopt(argc, argv, "v")) != -1) {
+  while ((result=getopt(argc, argv, "vb:")) != -1) {
     switch (result) {
       case 'v':
         verbose = true;
+        break;
+      case 'b':
+        beam_width = atoi(optarg);
         break;
     }
   }
@@ -96,9 +118,6 @@ int main(int argc, char* argv[]) {
   i += 1;
   std::string test_file = argv[i];
 
-//  char* model_file = argv[1];
-//  std::string test_file = argv[2];
-
   StructuredPerceptron perc;
   perc.load(model_file);
 
@@ -106,7 +125,7 @@ int main(int argc, char* argv[]) {
   Dictionary feature_dic = perc.get_feature_dic();
   std::vector<FeatureTemplate> tmpl = perc.tmpl;
 
-  eval(test_file, perc, feature_dic, label_dic, tmpl, verbose);
+  eval(test_file, perc, feature_dic, label_dic, tmpl, verbose, beam_width);
 
   return 0;
 }

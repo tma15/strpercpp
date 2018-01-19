@@ -5,8 +5,9 @@
 #define STRPERCPP_NODE_H
 
 #include <iostream>
-#include <unordered_set>
 #include <memory>
+#include <queue>
+#include <unordered_set>
 #include <vector>
 
 namespace strpercpp {
@@ -25,10 +26,10 @@ class Node {
     /*! label */
     std::string label;
 
-    /*! the pointer to previous node */
+    /*! the pointer to previous node on the previous time step */
     std::shared_ptr<Node> prev;
 
-    /*! the pointer to next node */
+    /*! the pointer to next node in the same time step */
     std::shared_ptr<Node> bnext;
 
     /*! the score of the node */
@@ -42,6 +43,17 @@ class Node {
 };
 
 typedef std::shared_ptr<Node> node_ptr;
+
+class NodeCompare {
+  public:
+    bool operator() (node_ptr a, node_ptr b) {
+//      printf("   a:%f b:%f\n", a->path_score, b->path_score);
+      return a->path_score > b->path_score;
+//      return a->path_score < b->path_score;
+    }
+};
+
+typedef std::priority_queue<node_ptr, std::vector<node_ptr>, NodeCompare> node_ptr_queue;
 
 } // namespace strpercpp
 

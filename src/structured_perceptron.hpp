@@ -87,14 +87,17 @@ class StructuredPerceptron {
        * \param[in] nodes the lattice of nodes
        * \param[out] nodes the sequence of nodes that hold labels
        */
-      std::vector< node_ptr >
-      predict(std::vector< node_ptr >& nodes);
+      std::vector<node_ptr>
+      predict(std::vector<node_ptr>& nodes);
+
+      std::vector<node_ptr>
+      nbest(std::vector<node_ptr>& nodes, int beam_width);
 
       /*! updates weight vector
        * \param[in] sequence the sequence of features
        * \param[out] nodes the sequence of nodes that hold labels
        */
-      std::vector< node_ptr >
+      std::vector<node_ptr>
       predict(const std::vector< std::vector<std::string> >& sequence);
 
       /*! save learned model

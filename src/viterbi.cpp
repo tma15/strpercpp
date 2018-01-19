@@ -8,17 +8,17 @@
 namespace strpercpp {
     
 
-void viterbi(std::vector< node_ptr >& nodes) {
+void viterbi(std::vector<node_ptr>& nodes) {
   for (int i=1; i < nodes.size(); ++i) {
-    for (node_ptr curr_node = nodes[i]; curr_node != NULL; curr_node = curr_node->bnext) {
+    for (node_ptr curr_n = nodes[i]; curr_n != NULL; curr_n = curr_n->bnext) {
       node_ptr best_node;
       float best_score;
       bool is_new = true;
-      for (node_ptr prev_node = nodes[i-1]; prev_node != NULL; prev_node = prev_node->bnext) {
-        float score = prev_node->path_score + curr_node->score;
+      for (node_ptr prev_n = nodes[i-1]; prev_n != NULL; prev_n = prev_n->bnext) {
+        float score = prev_n->path_score + curr_n->score;
         if (score > best_score || is_new) {
           best_score = score;
-          best_node = prev_node;
+          best_node = prev_n;
           is_new = false;
         }
       }
@@ -28,8 +28,8 @@ void viterbi(std::vector< node_ptr >& nodes) {
         exit(1);
       }
 
-      curr_node->prev = best_node;
-      curr_node->path_score = best_score;
+      curr_n->prev = best_node;
+      curr_n->path_score = best_score;
     }
   }
 };
@@ -46,7 +46,7 @@ std::vector< node_ptr > backtrack(std::vector< node_ptr >& nodes) {
 
   node_ptr node = nodes[nodes.size()-1];
   for (int i = size_path - 1; i >= 0; --i) {
-    node = node.get()->prev;
+    node = node->prev;
     path[i] = node;
   }
   return path;

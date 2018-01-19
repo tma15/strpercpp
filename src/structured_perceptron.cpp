@@ -200,24 +200,36 @@ std::vector< node_ptr > StructuredPerceptron::predict(
 std::vector< node_ptr > StructuredPerceptron::predict(
         const std::vector< std::vector< int > >& feature_ids) {
 
-  std::vector< node_ptr > nodes = build_lattice(this->label_dic.size(), feature_ids);
-  std::vector< node_ptr > path = this->predict(nodes);
+  std::vector<node_ptr> nodes = build_lattice(this->label_dic.size(), feature_ids);
+  std::vector<node_ptr> path = this->predict(nodes);
   return path;
 };
 
-std::vector< node_ptr > StructuredPerceptron::predict(
-        std::vector< node_ptr >& nodes) {
-
+std::vector<node_ptr>
+StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
   for (int i=0; i < nodes.size(); ++i) {
-    for (node_ptr n = nodes[i]; n != NULL; n = n.get()->bnext) {
+    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
       this->fire(n);
     }
   }
 
   viterbi(nodes);
-  std::vector< node_ptr > path = backtrack(nodes);
+  std::vector<node_ptr> path = backtrack(nodes);
   return path;
 };
+
+std::vector<node_ptr>
+StructuredPerceptron::nbest(std::vector<node_ptr>& nodes, int beam_width) {
+  for (int i=0; i < nodes.size(); ++i) {
+    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
+      this->fire(n);
+    }
+  }
+
+  std::vector<node_ptr> nbest = beamsearch(nodes, beam_width);
+  return nbest;
+};
+
 
 void StructuredPerceptron::save(const char* filename) {
     FILE* fp = fopen(filename, "wb");
