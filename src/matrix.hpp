@@ -18,6 +18,9 @@ class Matrix {
     Matrix();
     Matrix(int row, int col);
 
+    int row() { return row_; };
+    int col() { return col_; };
+
     /*! returns weight of a feature
      * \param[in] i index of row
      * \param[in] j index of column
