@@ -41,6 +41,8 @@ void eval(
           &true_path_list,
           train);
 
+//  printf("labelsize:%d\n", label_dic.size());
+
   int n_correct_sent = 0;
   int n_sent = sequences.size();
   int n_correct_tok = 0;
@@ -72,7 +74,9 @@ void eval(
       std::string slabel = label_dic.gets(ilabel);
 
       if (verbose) {
-        std::cout << sequences[i][j][0] << "\t";
+        for (int k=0; k < sequences[i][j].size(); ++k) {
+          std::cout << sequences[i][j][k] << "\t";
+        }
         std::cout << labels[i][j] << "\t";
         std::cout << slabel << std::endl;
       }
@@ -92,8 +96,12 @@ void eval(
       std::cout << std::endl;
     }
   }
-  std::cout << n_correct_tok << "/" << n_tok << std::endl;
-  std::cout << n_correct_sent << "/" << n_sent << std::endl;
+
+  float acc_tok = float(n_correct_tok) / float(n_tok);
+  float acc_sen = float(n_correct_sent) / float(n_sent);
+//  printf("Accuracy:\n");
+//  printf("Token %.2f (%d/%d)\n", acc_tok, n_correct_tok, n_tok);
+//  printf("Sentence %.2f (%d/%d)\n", acc_sen, n_correct_sent, n_sent);
 
 };
 

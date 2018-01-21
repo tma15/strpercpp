@@ -135,10 +135,8 @@ void Corpus::build_lattices(
       fids.push_back(features);
     }
 
-    std::vector< node_ptr > nodes = build_lattice(label_size,
-            fids);
-
-    std::vector< node_ptr > true_path_ = true_path(nodes, yids);
+    std::vector<node_ptr> nodes = build_lattice(label_size, fids);
+    std::vector<node_ptr> true_path_ = true_path(nodes, yids);
 
     nodes_list->push_back(nodes);
     true_path_list->push_back(true_path_);

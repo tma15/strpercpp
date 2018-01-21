@@ -34,12 +34,14 @@ void StructuredPerceptron::fire(node_ptr node) {
   node.get()->score = 0.;
   int num_features = node.get()->feature_ids.size();
   int yid = node.get()->Y;
-  const std::vector<float> w_y = this->w[yid];
-  for (int i=0; i < num_features; ++i) {
-    int fid = node->feature_ids[i];
 
-    float w_f = w_y[fid];
-    node.get()->score += w_f;
+  if (yid < label_dic.size()) {
+    const std::vector<float> w_y = this->w[yid];
+    for (int i=0; i < num_features; ++i) {
+      int fid = node->feature_ids[i];
+      float w_f = w_y[fid];
+      node.get()->score += w_f;
+    }
   }
 };
 
@@ -208,7 +210,10 @@ std::vector< node_ptr > StructuredPerceptron::predict(
 std::vector<node_ptr>
 StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
   for (int i=0; i < nodes.size(); ++i) {
+//  for (int i=1; i < nodes.size()-1; ++i) {
+//    printf("t:%d\n", i);
     for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
+//      printf("y:%d\n", n->Y);
       this->fire(n);
     }
   }
@@ -221,6 +226,7 @@ StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
 std::vector<node_ptr>
 StructuredPerceptron::nbest(std::vector<node_ptr>& nodes, int beam_width) {
   for (int i=0; i < nodes.size(); ++i) {
+//  for (int i=1; i < nodes.size()-1; ++i) {
     for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
       this->fire(n);
     }

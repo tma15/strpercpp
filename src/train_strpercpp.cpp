@@ -71,6 +71,9 @@ int main(int argc, char* argv[]) {
   perc.set_template(tmpl);
 
   std::cout << "#samples: " << sequences.size() << std::endl;
+  std::cout << "#labels: " << label_dic.size() << std::endl;
+  std::cout << "#featres: " << feature_dic.size() << std::endl;
+//  exit(0);
   for (int e=0; e < epoch; ++e) {
     std::cout << "epoch:" << e+1 << "/" << epoch << std::endl;
     for (int i=0; i < nodes_list.size(); ++i) {
