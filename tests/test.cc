@@ -1,3 +1,4 @@
+#include "strpercpp/argparse.h"
 #include "strpercpp/corpus.hpp"
 #include "strpercpp/dictionary.hpp"
 #include "strpercpp/feature_template.hpp"
@@ -7,6 +8,30 @@
 #include "strpercpp/viterbi.hpp"
 
 using namespace strpercpp;
+
+void test_argparse() {
+  using namespace argparse;
+  ArgParser parser = ArgParser();
+
+  parser.add_argument("-e");
+  parser.add_argument("--update");
+
+  const char* argv[] = {"test", "-e", "10", "--update", "a"};
+  parser.parse_args(5, argv);
+
+  int expected1 = 10;
+  int epoch = parser.get<int>("e");
+  if (epoch != expected1) {
+    printf("error1\n");
+  }
+
+  std::string expected2 = "a";
+  std::string got2 = parser.get<std::string>("update");
+  if (got2 != expected2) {
+    printf("error2 got:%s\n", got2.c_str());
+  }
+
+}
 
 void test_pq() {
   node_ptr_queue pq;
@@ -93,7 +118,8 @@ int main(int argc, char const* argv[]) {
   StructuredPerceptron model;
 
 //  test_pq();
-  test_lattice();
+//  test_lattice();
+  test_argparse();
   
   return 0;
 }

@@ -12,6 +12,7 @@ libstrpercpp_la_SOURCES = \
 	structured_perceptron.hpp structured_perceptron.cpp
 
 pkginclude_HEADERS = \
+	argparse.h \
 	corpus.hpp \
 	dictionary.hpp \
 	feature_template.hpp \
