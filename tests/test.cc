@@ -15,9 +15,11 @@ void test_argparse() {
 
   parser.add_argument("-e");
   parser.add_argument("--update");
+  parser.add_argument("train_file");
+  parser.add_argument("dev_file");
 
-  const char* argv[] = {"test", "-e", "10", "--update", "a"};
-  parser.parse_args(5, argv);
+  const char* argv[] = {"test", "-e", "10", "--update", "a", "train.txt", "dev.txt"};
+  parser.parse_args(7, argv);
 
   int expected1 = 10;
   int epoch = parser.get<int>("e");
@@ -29,6 +31,18 @@ void test_argparse() {
   std::string got2 = parser.get<std::string>("update");
   if (got2 != expected2) {
     printf("error2 got:%s\n", got2.c_str());
+  }
+
+  std::string expected3 = "train.txt";
+  std::string got3 = parser.get<std::string>("train_file");
+  if (got3 != expected3) {
+    printf("error3 got:%s\n", got3.c_str());
+  }
+
+  std::string expected4 = "dev.txt";
+  std::string got4 = parser.get<std::string>("dev_file");
+  if (got4 != expected4) {
+    printf("error4 got:%s\n", got4.c_str());
   }
 
 }
