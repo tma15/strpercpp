@@ -29,11 +29,10 @@ class Arg {
   public:
     std::string name;
     std::string value;
-    int position;
 
     Arg() {}
 
-    Arg(std::string name_): name(name_), value(""), position(0) {}
+    Arg(std::string name_): name(name_), value("") {}
 
 };
 
@@ -56,29 +55,38 @@ class ArgParser {
       } else { // positional argument
         key = optname;
         Arg arg(key);
-//        printf("add positional argument:%d %s\n", n_args, key.c_str());
         pos_args[n_args] = arg;
         position_by_key[key] = n_args;
       }
     }
 
     void add_argument(const std::string& optname, const std::string& default_v) {
+      n_args += 1;
+
       std::string key;
       if (optname[0] == '-' && optname[1] == '-') { // long option
         key = optname.substr(2, optname.size());
+        Arg arg(key);
+        arg.value = default_v;
+        opt_args[key] = arg;
       } else if (optname[0] == '-') { // short option
         key = lexical_cast<char, std::string>(optname[1]);
+        Arg arg(key);
+        arg.value = default_v;
+        opt_args[key] = arg;
+      } else{
+        key = optname;
+        Arg arg(key);
+        arg.value = default_v;
+        pos_args[n_args] = arg;
+        position_by_key[key] = n_args;
       }
-      Arg arg(key);
-      arg.value = default_v;
-      opt_args[key] = arg;
     }
 
     template<typename T> 
     T get(const std::string& key) {
       std::unordered_map<std::string, Arg>::const_iterator it = opt_args.find(key);
       if (it == opt_args.end()) { // not found in optional arguments
-
         std::unordered_map<std::string, int>::const_iterator it2 = position_by_key.find(key);
         if (it2 == position_by_key.end()) { // not found in positional arguments
           std::cerr << "not found:" << key << std::endl;
@@ -95,9 +103,9 @@ class ArgParser {
     }
 
     void parse_args(int argc, const char* argv[]) {
+      int position = 1;
 
-      int position = 0;
-      for (int optind=0; optind < argc; ++optind) {
+      for (int optind=1; optind < argc; ++optind) {
         if (argv[optind][0] == '-') { 
           if (argv[optind][1] == '-') { // long option
 
@@ -122,13 +130,12 @@ class ArgParser {
             }
           }
         } else { // positional argument
-//          printf("positional argument:%s %d\n", argv[optind], position);
           std::unordered_map<int, Arg>::const_iterator it = pos_args.find(position);
           if (it != pos_args.end()) {
             std::string value = lexical_cast<const char*, std::string>(argv[optind]);
             pos_args[position].value = value;
+            position += 1;
           }
-          position += 1;
 
         }
       }

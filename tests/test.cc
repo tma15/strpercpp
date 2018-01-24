@@ -13,13 +13,22 @@ void test_argparse() {
   using namespace argparse;
   ArgParser parser = ArgParser();
 
-  parser.add_argument("-e");
-  parser.add_argument("--update");
-  parser.add_argument("train_file");
-  parser.add_argument("dev_file");
+//  int argc = 6;
+//  char const* argv[] = {"train_strpercpp", "-e", "10", "train.txt", "template", "model"};
 
-  const char* argv[] = {"test", "-e", "10", "--update", "a", "train.txt", "dev.txt"};
-  parser.parse_args(7, argv);
+  int argc = 8;
+  char const* argv[] = {"train_strpercpp", "-e", "10", "--update", "0", "train.txt", "template", "model"};
+//  for (int i=0; i < argc; ++i) {
+//    printf("i: %d %s\n", i, argv[i]);
+//  }
+
+  parser.add_argument("-e", "10");
+  parser.add_argument("--update", "a");
+  parser.add_argument("train_file");
+  parser.add_argument("template_file");
+  parser.add_argument("model_file");
+
+  parser.parse_args(argc, argv);
 
   int expected1 = 10;
   int epoch = parser.get<int>("e");
@@ -27,10 +36,10 @@ void test_argparse() {
     printf("error1\n");
   }
 
-  std::string expected2 = "a";
-  std::string got2 = parser.get<std::string>("update");
+  int expected2 = 0;
+  int got2 = parser.get<int>("update");
   if (got2 != expected2) {
-    printf("error2 got:%s\n", got2.c_str());
+    printf("error2 got:%d\n", got2);
   }
 
   std::string expected3 = "train.txt";
@@ -39,8 +48,8 @@ void test_argparse() {
     printf("error3 got:%s\n", got3.c_str());
   }
 
-  std::string expected4 = "dev.txt";
-  std::string got4 = parser.get<std::string>("dev_file");
+  std::string expected4 = "template";
+  std::string got4 = parser.get<std::string>("template_file");
   if (got4 != expected4) {
     printf("error4 got:%s\n", got4.c_str());
   }
