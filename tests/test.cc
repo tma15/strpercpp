@@ -1,3 +1,4 @@
+#include "strpercpp/argparse.h"
 #include "strpercpp/corpus.hpp"
 #include "strpercpp/dictionary.hpp"
 #include "strpercpp/feature_template.hpp"
@@ -7,6 +8,53 @@
 #include "strpercpp/viterbi.hpp"
 
 using namespace strpercpp;
+
+void test_argparse() {
+  using namespace argparse;
+  ArgParser parser = ArgParser();
+
+//  int argc = 6;
+//  char const* argv[] = {"train_strpercpp", "-e", "10", "train.txt", "template", "model"};
+
+  int argc = 8;
+  char const* argv[] = {"train_strpercpp", "-e", "10", "--update", "0", "train.txt", "template", "model"};
+//  for (int i=0; i < argc; ++i) {
+//    printf("i: %d %s\n", i, argv[i]);
+//  }
+
+  parser.add_argument("-e", "10");
+  parser.add_argument("--update", "a");
+  parser.add_argument("train_file");
+  parser.add_argument("template_file");
+  parser.add_argument("model_file");
+
+  parser.parse_args(argc, argv);
+
+  int expected1 = 10;
+  int epoch = parser.get<int>("e");
+  if (epoch != expected1) {
+    printf("error1\n");
+  }
+
+  int expected2 = 0;
+  int got2 = parser.get<int>("update");
+  if (got2 != expected2) {
+    printf("error2 got:%d\n", got2);
+  }
+
+  std::string expected3 = "train.txt";
+  std::string got3 = parser.get<std::string>("train_file");
+  if (got3 != expected3) {
+    printf("error3 got:%s\n", got3.c_str());
+  }
+
+  std::string expected4 = "template";
+  std::string got4 = parser.get<std::string>("template_file");
+  if (got4 != expected4) {
+    printf("error4 got:%s\n", got4.c_str());
+  }
+
+}
 
 void test_pq() {
   node_ptr_queue pq;
@@ -93,7 +141,8 @@ int main(int argc, char const* argv[]) {
   StructuredPerceptron model;
 
 //  test_pq();
-  test_lattice();
+//  test_lattice();
+  test_argparse();
   
   return 0;
 }
