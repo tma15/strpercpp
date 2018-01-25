@@ -5,7 +5,6 @@
 #include <map>
 #include <sstream>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace strpercpp {
@@ -29,55 +28,80 @@ class Arg {
   public:
     std::string name;
     std::string value;
+    std::string help;
+    std::string opt;
 
     Arg() {}
 
-    Arg(std::string name_): name(name_), value("") {}
+    Arg(std::string name_): name(name_), value(""), help(""), opt("") {}
 
+    Arg(std::string name_, std::string help_, std::string opt_)
+      :name(name_), value(""), help(help_), opt(opt_) {}
+
+    Arg(std::string name_, std::string value_, std::string help_,
+        std::string opt_) :name(name_), value(value_), help(help_), opt(opt_) {}
 };
 
 class ArgParser {
   public:
-    ArgParser(): n_args(0) {}
+    ArgParser(): n_args(0), position(1) {}
+    
+    void print_help() {
+      std::map<std::string, Arg>::iterator it;
+      std::map<int, Arg>::iterator it2;
 
-    void add_argument(const std::string& optname) {
+      std::cout << "Usage: " << cmd << " [options]";
+      for (it2 = pos_args.begin(); it2 != pos_args.end(); ++it2) {
+        std::cout << " " << it2->second.name; 
+      }
+      std::cout << std::endl;
+
+      std::cout << "options:" << std::endl;
+      for (it = opt_args.begin(); it != opt_args.end(); ++it) {
+        std::cout << "  " << it->second.opt << "\t\t\t" << it->second.help << std::endl; 
+      }
+
+      for (it2 = pos_args.begin(); it2 != pos_args.end(); ++it2) {
+        std::cout << "  " << it2->second.opt << "\t\t\t" << it2->second.help << std::endl; 
+      }
+    }
+
+    void add_argument(const std::string& optname, const std::string& help) {
       n_args += 1;
 
       std::string key;
       if (optname[0] == '-' && optname[1] == '-') {
         key = optname.substr(2, optname.size());
-        Arg arg(key);
+        Arg arg(key, help, optname);
         opt_args[key] = arg;
       } else if (optname[0] == '-') {
         key = lexical_cast<char, std::string>(optname[1]);
-        Arg arg(key);
+        Arg arg(key, help, optname);
         opt_args[key] = arg;
       } else { // positional argument
         key = optname;
-        Arg arg(key);
+        Arg arg(key, help, optname);
         pos_args[n_args] = arg;
         position_by_key[key] = n_args;
       }
     }
 
-    void add_argument(const std::string& optname, const std::string& default_v) {
+    void add_argument(const std::string& optname, const std::string& default_v,
+        const std::string& help) {
       n_args += 1;
 
       std::string key;
       if (optname[0] == '-' && optname[1] == '-') { // long option
         key = optname.substr(2, optname.size());
-        Arg arg(key);
-        arg.value = default_v;
+        Arg arg(key, default_v, help, optname);
         opt_args[key] = arg;
       } else if (optname[0] == '-') { // short option
         key = lexical_cast<char, std::string>(optname[1]);
-        Arg arg(key);
-        arg.value = default_v;
+        Arg arg(key, default_v, help, optname);
         opt_args[key] = arg;
       } else{
         key = optname;
-        Arg arg(key);
-        arg.value = default_v;
+        Arg arg(key, default_v, help, optname);
         pos_args[n_args] = arg;
         position_by_key[key] = n_args;
       }
@@ -85,16 +109,16 @@ class ArgParser {
 
     template<typename T> 
     T get(const std::string& key) {
-      std::unordered_map<std::string, Arg>::const_iterator it = opt_args.find(key);
+      std::map<std::string, Arg>::const_iterator it = opt_args.find(key);
       if (it == opt_args.end()) { // not found in optional arguments
-        std::unordered_map<std::string, int>::const_iterator it2 = position_by_key.find(key);
+        std::map<std::string, int>::const_iterator it2 = position_by_key.find(key);
         if (it2 == position_by_key.end()) { // not found in positional arguments
           std::cerr << "not found:" << key << std::endl;
           T ret = T();
           return ret;
         } else { // found in positional arguments
-          int position = it2->second;
-          return lexical_cast<std::string, T>(pos_args[position].value);
+          int pos_arg = it2->second;
+          return lexical_cast<std::string, T>(pos_args[pos_arg].value);
         }
 
       } else { // found in optional arguments
@@ -103,34 +127,28 @@ class ArgParser {
     }
 
     void parse_args(int argc, const char* argv[]) {
-      int position = 1;
+      position = 1;
+      cmd = lexical_cast<const char*, std::string>(argv[0]);
 
       for (int optind=1; optind < argc; ++optind) {
         if (argv[optind][0] == '-') { 
           if (argv[optind][1] == '-') { // long option
-
             std::string key(argv[optind] + 2, argv[optind] + strlen(argv[optind]));
-
-            std::unordered_map<std::string, Arg>::const_iterator it = opt_args.find(key);
-            if (it != opt_args.end()) {
-              optind += 1;
-              std::string value = lexical_cast<const char*, std::string>(argv[optind]);
-              opt_args[key].value = value;
-              position += 1;
+            if (key == "help") {
+              print_help();
+              exit(0);
             }
-
+            optind = add_optional_argument(optind, key, argv);
           } else { // short option
-            std::string key = lexical_cast<char, std::string>(argv[optind][1]);
-            std::unordered_map<std::string, Arg>::const_iterator it = opt_args.find(key);
-            if (it != opt_args.end()) {
-              optind += 1;
-              std::string value = lexical_cast<const char*, std::string>(argv[optind]);
-              opt_args[key].value = value;
-              position += 1;
+            if (argv[optind][1] == 'h') {
+              print_help();
+              exit(0);
             }
+            std::string key = lexical_cast<char, std::string>(argv[optind][1]);
+            optind = add_optional_argument(optind, key, argv);
           }
         } else { // positional argument
-          std::unordered_map<int, Arg>::const_iterator it = pos_args.find(position);
+          std::map<int, Arg>::const_iterator it = pos_args.find(position);
           if (it != pos_args.end()) {
             std::string value = lexical_cast<const char*, std::string>(argv[optind]);
             pos_args[position].value = value;
@@ -142,10 +160,26 @@ class ArgParser {
     }
 
   private:
+    std::string cmd;
     int n_args;
-    std::unordered_map<std::string, Arg> opt_args;
-    std::unordered_map<int, Arg> pos_args;
-    std::unordered_map<std::string, int> position_by_key;
+    int position;
+    std::map<std::string, Arg> opt_args;
+    std::map<int, Arg> pos_args;
+    std::map<std::string, int> position_by_key;
+
+    int add_optional_argument(int optind, const std::string& key, const char* argv[]) {
+      std::map<std::string, Arg>::const_iterator it = opt_args.find(key);
+      if (it != opt_args.end()) {
+        optind += 1;
+        std::string value = lexical_cast<const char*, std::string>(argv[optind]);
+        opt_args[key].value = value;
+        position += 1;
+      } else {
+        std::cerr << "Unrecognized option:" << argv[optind] << std::endl;
+        exit(1);
+      }
+      return optind;
+    }
 };
 
 
