@@ -27,11 +27,11 @@ void usage() {
 
 int main(int argc, char const* argv[]) {
   argparse::ArgParser parser;
-  parser.add_argument("-e", "3");
-  parser.add_argument("--update", "0");
-  parser.add_argument("train_file");
-  parser.add_argument("template_file");
-  parser.add_argument("model_file");
+  parser.add_argument("-e", "3", "number of epoch");
+  parser.add_argument("--update", "0", "updating rule");
+  parser.add_argument("train_file", "training file");
+  parser.add_argument("template_file", "template file");
+  parser.add_argument("model_file", "model file");
   parser.parse_args(argc, argv);
 
   int epoch = parser.get<int>("e");
@@ -57,12 +57,11 @@ int main(int argc, char const* argv[]) {
 
   std::vector<FeatureTemplate> tmpl = read_template_file(template_file.c_str());
   Corpus corpus;
-  bool train = true;
   corpus.read(train_file, &feature_dic, &label_dic, &sequences, &labels);
 
+  bool train = true;
   corpus.build_lattices(&feature_dic, label_dic,
-      sequences, labels, tmpl,
-      &nodes_list, &true_path_list, train);
+      sequences, labels, tmpl, &nodes_list, &true_path_list, train);
 
   StructuredPerceptron perc(feature_dic, label_dic);
   perc.set_template(tmpl);

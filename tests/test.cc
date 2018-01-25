@@ -13,22 +13,20 @@ void test_argparse() {
   using namespace argparse;
   ArgParser parser = ArgParser();
 
-//  int argc = 6;
-//  char const* argv[] = {"train_strpercpp", "-e", "10", "train.txt", "template", "model"};
 
   int argc = 8;
-  char const* argv[] = {"train_strpercpp", "-e", "10", "--update", "0", "train.txt", "template", "model"};
-//  for (int i=0; i < argc; ++i) {
-//    printf("i: %d %s\n", i, argv[i]);
-//  }
+  char const* argv[] = {"train_strpercpp", "-e", "10",
+    "--update", "0", "train.txt", "template", "model"};
 
-  parser.add_argument("-e", "10");
-  parser.add_argument("--update", "a");
-  parser.add_argument("train_file");
-  parser.add_argument("template_file");
-  parser.add_argument("model_file");
-
+  parser.add_argument("-e", "10", "number of epoch");
+  parser.add_argument("--update", "0", "updating rule");
+  parser.add_argument("train_file", "a");
+  parser.add_argument("template_file", "b");
+  parser.add_argument("model_file", "c");
   parser.parse_args(argc, argv);
+
+//  parser.print_help();
+
 
   int expected1 = 10;
   int epoch = parser.get<int>("e");
