@@ -4,6 +4,7 @@
 #include "iostream"
 #include "string"
 
+#include "argparse.h"
 #include "corpus.hpp"
 #include "dictionary.hpp"
 #include "feature_template.hpp"
@@ -12,14 +13,11 @@
 
 using namespace strpercpp;
 
-void eval(
-      std::string test_file,
-      StructuredPerceptron& perc,
-      Dictionary& feature_dic,
-      Dictionary& label_dic,
-      std::vector<FeatureTemplate>& tmpl,
-      bool verbose,
-      int beam_width) {
+void eval(std::string test_file,
+    StructuredPerceptron& perc,
+    Dictionary& feature_dic, Dictionary& label_dic,
+    std::vector<FeatureTemplate>& tmpl, bool verbose, int beam_width,
+    int decode) {
 
   std::vector< std::vector< std::vector< std::string > > > sequences;
   std::vector< std::vector< std::string > > labels;
@@ -29,9 +27,7 @@ void eval(
   Corpus corpus;
   bool train = false;
 
-  corpus.read(test_file,
-          &feature_dic, &label_dic,
-          &sequences, &labels);
+  corpus.read(test_file, &feature_dic, &label_dic, &sequences, &labels);
   
   corpus.build_lattices(
           &feature_dic, label_dic,
@@ -50,24 +46,33 @@ void eval(
   for (int i=0; i < nodes_list.size(); ++i) {
     std::vector<node_ptr> nodes = nodes_list[i];
 
-    std::vector<node_ptr> yg = perc.predict(nodes);
-
-    std::vector<node_ptr> y = perc.nbest(nodes, beam_width);
-    node_ptr best = y[0];
-
-    int t = 0;
-    std::vector<node_ptr> b1(nodes.size()-2);
-    node_ptr n = best->prev;
-    for (int t=nodes.size()-2; t >= 1; --t) {
-      b1[t-1] = n;
-      n = n->prev;
+    std::vector<node_ptr> y;
+    switch (decode) {
+      case 0:
+        y = perc.predict(nodes);
+        break;
+      case 1:
+        std::vector< std::vector<node_ptr> > ys = perc.nbest(nodes, beam_width);
+        y = ys[0];
     }
+//    std::vector<node_ptr> yg = perc.predict(nodes);
+
+//    std::vector<node_ptr> y = perc.nbest(nodes, beam_width);
+//    node_ptr best = y[0];
+
+//    int t = 0;
+//    std::vector<node_ptr> b1(nodes.size()-2);
+//    node_ptr n = best->prev;
+//    for (int t=nodes.size()-2; t >= 1; --t) {
+//      b1[t-1] = n;
+//      n = n->prev;
+//    }
 
     bool is_correct = true;
-//    for (int j=0; j < yg.size(); ++j) {
-//      int ilabel = yg[j]->Y;
-    for (int j=0; j < b1.size(); ++j) {
-      int ilabel = b1[j]->Y;
+    for (int j=0; j < y.size(); ++j) {
+      int ilabel = y[j]->Y;
+//    for (int j=0; j < b1.size(); ++j) {
+//      int ilabel = b1[j]->Y;
 
       n_tok += 1;
 
@@ -97,43 +102,38 @@ void eval(
     }
   }
 
-  float acc_tok = float(n_correct_tok) / float(n_tok);
-  float acc_sen = float(n_correct_sent) / float(n_sent);
-//  printf("Accuracy:\n");
-//  printf("Token %.2f (%d/%d)\n", acc_tok, n_correct_tok, n_tok);
-//  printf("Sentence %.2f (%d/%d)\n", acc_sen, n_correct_sent, n_sent);
+  if (!verbose) {
+    float acc_tok = float(n_correct_tok) / float(n_tok);
+    float acc_sen = float(n_correct_sent) / float(n_sent);
+    printf("Accuracy:\n");
+    printf("Token %.2f (%d/%d)\n", acc_tok, n_correct_tok, n_tok);
+    printf("Sentence %.2f (%d/%d)\n", acc_sen, n_correct_sent, n_sent);
+  }
 
 };
 
-int main(int argc, char* argv[]) {
-  int result;
-  bool verbose = false;
-  int beam_width = 1;
+int main(int argc, char const* argv[]) {
+  argparse::ArgParser parser;
+  parser.add_argument("-v", "0", "verbose mode");
+  parser.add_argument("-b", "width of beam");
+  parser.add_argument("-d", "decoding method");
+  parser.add_argument("model_file", "model file");
+  parser.add_argument("test_file", "test file");
+  parser.parse_args(argc, argv);
 
-  while ((result=getopt(argc, argv, "vb:")) != -1) {
-    switch (result) {
-      case 'v':
-        verbose = true;
-        break;
-      case 'b':
-        beam_width = atoi(optarg);
-        break;
-    }
-  }
-
-  int i = optind;
-  char* model_file = argv[i];
-  i += 1;
-  std::string test_file = argv[i];
-
+  std::string model_file = parser.get<std::string>("model_file");
   StructuredPerceptron perc;
-  perc.load(model_file);
+  perc.load(model_file.c_str());
 
   Dictionary label_dic = perc.get_label_dic();
   Dictionary feature_dic = perc.get_feature_dic();
   std::vector<FeatureTemplate> tmpl = perc.tmpl;
 
-  eval(test_file, perc, feature_dic, label_dic, tmpl, verbose, beam_width);
+  std::string test_file = parser.get<std::string>("test_file");
+  int verbose = parser.get<bool>("v");
+  int beam_width = parser.get<int>("b");
+  int decode = parser.get<int>("d");
+  eval(test_file, perc, feature_dic, label_dic, tmpl, verbose, beam_width, decode);
 
   return 0;
 }
