@@ -44,7 +44,8 @@ class Arg {
 
 class ArgParser {
   public:
-    ArgParser(): n_args(0), position(1) {}
+//    ArgParser(): n_pos_arg(0), position(1) {}
+    ArgParser(): n_pos_arg(0) {}
     
     void print_help() {
       std::map<std::string, Arg>::iterator it;
@@ -67,7 +68,7 @@ class ArgParser {
     }
 
     void add_argument(const std::string& optname, const std::string& help) {
-      n_args += 1;
+//      printf("ADD pos:%d %s\n", n_pos_arg, optname.c_str());
 
       std::string key;
       if (optname[0] == '-' && optname[1] == '-') {
@@ -79,16 +80,19 @@ class ArgParser {
         Arg arg(key, help, optname);
         opt_args[key] = arg;
       } else { // positional argument
+//        printf("ADD pos:%d %s\n", n_pos_arg, optname.c_str());
         key = optname;
         Arg arg(key, help, optname);
-        pos_args[n_args] = arg;
-        position_by_key[key] = n_args;
+        pos_args[n_pos_arg] = arg;
+        position_by_key[key] = n_pos_arg;
+        n_pos_arg += 1;
       }
     }
 
     void add_argument(const std::string& optname, const std::string& default_v,
         const std::string& help) {
-      n_args += 1;
+//      n_pos_arg += 1;
+//      printf("ADD pos:%d %s\n", n_pos_arg, optname.c_str());
 
       std::string key;
       if (optname[0] == '-' && optname[1] == '-') { // long option
@@ -102,8 +106,9 @@ class ArgParser {
       } else{
         key = optname;
         Arg arg(key, default_v, help, optname);
-        pos_args[n_args] = arg;
-        position_by_key[key] = n_args;
+        pos_args[n_pos_arg] = arg;
+        position_by_key[key] = n_pos_arg;
+        n_pos_arg += 1;
       }
     }
 
@@ -127,7 +132,8 @@ class ArgParser {
     }
 
     void parse_args(int argc, const char* argv[]) {
-      position = 1;
+      int p = 0;
+//      position = 1;
       cmd = lexical_cast<const char*, std::string>(argv[0]);
 
       for (int optind=1; optind < argc; ++optind) {
@@ -148,11 +154,16 @@ class ArgParser {
             optind = add_optional_argument(optind, key, argv);
           }
         } else { // positional argument
-          std::map<int, Arg>::const_iterator it = pos_args.find(position);
+//          std::cout << "position:" << position << std::endl;
+//          std::map<int, Arg>::const_iterator it = pos_args.find(position);
+          std::map<int, Arg>::const_iterator it = pos_args.find(p);
           if (it != pos_args.end()) {
             std::string value = lexical_cast<const char*, std::string>(argv[optind]);
-            pos_args[position].value = value;
-            position += 1;
+//            std::cout << "position arg:" << value << std::endl;
+//            pos_args[position].value = value;
+            pos_args[p].value = value;
+//            position += 1;
+            p += 1;
           }
 
         }
@@ -161,8 +172,8 @@ class ArgParser {
 
   private:
     std::string cmd;
-    int n_args;
-    int position;
+    int n_pos_arg;
+//    int position;
     std::map<std::string, Arg> opt_args;
     std::map<int, Arg> pos_args;
     std::map<std::string, int> position_by_key;
@@ -173,7 +184,7 @@ class ArgParser {
         optind += 1;
         std::string value = lexical_cast<const char*, std::string>(argv[optind]);
         opt_args[key].value = value;
-        position += 1;
+//        position += 1;
       } else {
         std::cerr << "Unrecognized option:" << argv[optind] << std::endl;
         exit(1);
