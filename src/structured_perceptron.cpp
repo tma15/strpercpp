@@ -15,10 +15,8 @@ namespace strpercpp {
 StructuredPerceptron::StructuredPerceptron() {
 };
 
-StructuredPerceptron::StructuredPerceptron(Dictionary& feature_dic, Dictionary& label_dic) {
-  this->label_dic = label_dic;
-  this->feature_dic = feature_dic;
-  
+StructuredPerceptron::StructuredPerceptron(Dictionary& _feature_dic, Dictionary& _label_dic):
+  label_dic(_label_dic), feature_dic(_feature_dic) {
   this->w = Matrix(label_dic.size(), feature_dic.size());
 };
 
@@ -31,48 +29,45 @@ void StructuredPerceptron::read_template(const char* filename) {
 };
 
 void StructuredPerceptron::fire(node_ptr node) {
-  node.get()->score = 0.;
-  int num_features = node.get()->feature_ids.size();
-  int yid = node.get()->Y;
+  node->score = 0.;
+  int num_features = node->feature_ids.size();
+  int yid = node->Y;
 
   if (yid < label_dic.size()) {
     const std::vector<float> w_y = this->w[yid];
     for (int i=0; i < num_features; ++i) {
       int fid = node->feature_ids[i];
       float w_f = w_y[fid];
-      node.get()->score += w_f;
+      node->score += w_f;
     }
   }
 };
 
 
 
-void StructuredPerceptron::fit(
-        const std::vector< std::vector< int > >& feature_ids,
-        const std::vector< std::string >& labels) {
+void StructuredPerceptron::fit(const std::vector< std::vector< int > >& feature_ids,
+    const std::vector<std::string>& labels) {
 
   std::vector<node_ptr> nodes = build_lattice(this->label_dic.size(), feature_ids);
   this->fit(nodes, labels);
 };
 
-void StructuredPerceptron::fit(
-        std::vector< node_ptr >& nodes,
-        const std::vector< std::string >& labels) {
+void StructuredPerceptron::fit(std::vector<node_ptr>& nodes,
+    const std::vector<std::string>& labels) {
 
-  std::vector< node_ptr > path = this->predict(nodes);
+  std::vector<node_ptr> path = this->predict(nodes);
 
   std::vector<int> true_label_ids(labels.size());
   for (int i=0; i < labels.size(); ++i) {
     true_label_ids[i] = this->label_dic.geti(labels[i]);
   }
-  std::vector< node_ptr > true_path_ = true_path(nodes, true_label_ids);
-  this->fit(nodes, true_path_);
+  std::vector<node_ptr> true_path_ = true_path(nodes, true_label_ids);
+  this->_fit(nodes, true_path_);
 
 };
 
-void StructuredPerceptron::fit(
-        std::vector< node_ptr >& nodes,
-        std::vector< node_ptr >& true_path_) {
+void StructuredPerceptron::_fit(std::vector<node_ptr>& nodes,
+    std::vector<node_ptr>& true_path_) {
 
   std::vector< node_ptr > path = this->predict(nodes);
 
@@ -93,70 +88,74 @@ void StructuredPerceptron::fit(
 //
 // nodes: BOS, y1, y2, .., EOS
 // true_path_: t1, t2, ..
-void StructuredPerceptron::early_update(
-        std::vector< node_ptr >& nodes,
-        std::vector< node_ptr >& true_path_) {
+//void StructuredPerceptron::early_update(
+//        std::vector< node_ptr >& nodes,
+//        std::vector< node_ptr >& true_path_) {
 
-  for (int i=0; i < nodes.size(); ++i) {
-    for (node_ptr n = nodes[i]; n != NULL; n = n.get()->bnext) {
-      this->fire(n);
-    }
-  }
+//  for (int i=0; i < nodes.size(); ++i) {
+//    for (node_ptr n = nodes[i]; n != NULL; n = n.get()->bnext) {
+//      this->fire(n);
+//    }
+//  }
 
-  for (int i=1; i < nodes.size()-1; ++i) {
-    node_ptr best_n_curr = nodes[i];
+//  for (int i=1; i < nodes.size()-1; ++i) {
+//    node_ptr best_n_curr = nodes[i];
 
     // best one-step extention based on history
-    for (node_ptr curr_n = nodes[i]; curr_n != NULL; curr_n = curr_n->bnext) {
-      node_ptr best_n_prev;
-      float best_score;
-      bool is_new = true;
-      for (node_ptr prev_n = nodes[i-1]; prev_n != NULL; prev_n = prev_n->bnext) {
-        float score = prev_n->path_score + curr_n->score;
-        if (score > best_score || is_new) {
-          best_score = score;
-          best_n_prev = prev_n;
-          is_new = false;
-        }
-      }
-      curr_n->prev = best_n_prev;
-      curr_n->path_score = best_score;
-      if (curr_n->path_score > best_n_curr->path_score) {
-        best_n_curr = curr_n;
-      }
-    }
+//    for (node_ptr curr_n = nodes[i]; curr_n != NULL; curr_n = curr_n->bnext) {
+//      node_ptr best_n_prev;
+//      float best_score;
+//      bool is_new = true;
+//      for (node_ptr prev_n = nodes[i-1]; prev_n != NULL; prev_n = prev_n->bnext) {
+//        float score = prev_n->path_score + curr_n->score;
+//        if (score > best_score || is_new) {
+//          best_score = score;
+//          best_n_prev = prev_n;
+//          is_new = false;
+//        }
+//      }
+//      curr_n->prev = best_n_prev;
+//      curr_n->path_score = best_score;
+//      if (curr_n->path_score > best_n_curr->path_score) {
+//        best_n_curr = curr_n;
+//      }
+//    }
 
 //    printf("i:%d pred:%s(%d) true:%s(%d)\n", i,
 //        label_dic.gets(best_n_curr->Y).c_str(), best_n_curr->Y,
 //        label_dic.gets(true_path_[i-1]->Y).c_str(), true_path_[i-1]->Y);
 //    printf("i-1:%d / %d\n", i-1, true_path_.size());
-    if (best_n_curr->Y != true_path_[i-1]->Y) {
-      for (int j=0; j < i; ++j) {
-        node_ptr n = true_path_[j];
+//    if (best_n_curr->Y != true_path_[i-1]->Y) {
+//      for (int j=0; j < i; ++j) {
+//        node_ptr n = true_path_[j];
 //        printf("j:%d ++ y:%s(%d)\n", j, label_dic.gets(n->Y).c_str(), n->Y);
-        for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
-          int fid = *it;
+//        for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
+//          int fid = *it;
 //          printf("%s(%d) ", feature_dic.gets(fid).c_str(), fid);
-          this->w(n->Y, fid) += 1.;
-        }
+//          this->w(n->Y, fid) += 1.;
+//        }
 //        printf("\n");
-      }
+//      }
 
-      for (node_ptr n = best_n_curr; n != NULL; n = n->prev) {
+//      for (node_ptr n = best_n_curr; n != NULL; n = n->prev) {
 //        printf("j -- y:%s(%d)\n", label_dic.gets(n->Y).c_str(), n->Y);
-        for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
-          int fid = *it;
+//        for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
+//          int fid = *it;
 //          printf("%s(%d) ", feature_dic.gets(fid).c_str(), fid);
-          this->w(n->Y, fid) -= 1.;
-        }
-      }
+//          this->w(n->Y, fid) -= 1.;
+//        }
+//      }
 //      printf("\n");
-      break;
-    }
-  }
-  nodes.clear();
-};
+//      break;
+//    }
+//  }
+//  nodes.clear();
+//};
 
+//void StructuredPerceptron::max_violation_update(
+//        std::vector< node_ptr >& nodes,
+//        std::vector< node_ptr >& true_path_) {
+//}
 
 
 void StructuredPerceptron::update(const std::vector< node_ptr >& true_path,
@@ -164,7 +163,7 @@ void StructuredPerceptron::update(const std::vector< node_ptr >& true_path,
 
   for (int i=0; i < true_path.size(); ++i) {
     node_ptr n = true_path[i];
-    for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
+    for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
       int fid = *it;
       this->w(n->Y, fid) += 1.;
     }
@@ -172,7 +171,7 @@ void StructuredPerceptron::update(const std::vector< node_ptr >& true_path,
 
   for (int i=0; i < pred_path.size(); ++i) {
     node_ptr n = pred_path[i];
-    for (auto it = n.get()->feature_ids.begin(); it != n->feature_ids.end(); it++) {
+    for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
       int fid = *it;
       this->w(n->Y, fid) -= 1.;
     }
@@ -210,10 +209,7 @@ std::vector< node_ptr > StructuredPerceptron::predict(
 std::vector<node_ptr>
 StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
   for (int i=0; i < nodes.size(); ++i) {
-//  for (int i=1; i < nodes.size()-1; ++i) {
-//    printf("t:%d\n", i);
     for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
-//      printf("y:%d\n", n->Y);
       this->fire(n);
     }
   }
@@ -223,17 +219,38 @@ StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
   return path;
 };
 
-std::vector<node_ptr>
+std::vector< std::vector<node_ptr> >
 StructuredPerceptron::nbest(std::vector<node_ptr>& nodes, int beam_width) {
   for (int i=0; i < nodes.size(); ++i) {
-//  for (int i=1; i < nodes.size()-1; ++i) {
     for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
       this->fire(n);
     }
   }
 
   std::vector<node_ptr> nbest = beamsearch(nodes, beam_width);
-  return nbest;
+
+  std::vector< std::vector<node_ptr> > ret(beam_width);
+  for (int i=0; i < beam_width; ++i) {
+    std::vector<node_ptr> b(nodes.size()-2);
+    node_ptr n = nbest[i]->prev;
+    for (int t=nodes.size()-2; t >= 1; --t) {
+      b[t-1] = n;
+      n = n->prev;
+    }
+    ret[i] = b;
+  }
+
+//  node_ptr best = nbest[0];
+//  int t = 0;
+//  std::vector<node_ptr> b1(nodes.size()-2);
+//  node_ptr n = best->prev;
+//  for (int t=nodes.size()-2; t >= 1; --t) {
+//    b1[t-1] = n;
+//    n = n->prev;
+//  }
+
+//  return nbest;
+  return ret;
 };
 
 

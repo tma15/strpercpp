@@ -52,35 +52,40 @@ class StructuredPerceptron {
        * \param[in] nodes lattice of Node s
        * \param[in] true_path_ true path of Node s
        */
-      void fit(std::vector< node_ptr >& nodes, std::vector< node_ptr >& true_path_);
+      virtual void fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_) {
+        _fit(nodes, true_path_);
+      };
 
-      void early_update(std::vector< node_ptr >& nodes, std::vector< node_ptr >& true_path_);
+//      void early_update(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
+
+//      void max_violation_update(std::vector<node_ptr>& nodes,
+//          std::vector< node_ptr >& true_path_);
 
       /*! learns a model
        * \param[in] nodes lattice of Node s
        * \param[in] labels the sequence of true labels
        */
-      void fit(std::vector< node_ptr >& nodes, const std::vector< std::string >& labels);
+      void fit(std::vector<node_ptr>& nodes, const std::vector<std::string>& labels);
 
       /*! learns a model
        * \param[in] feature_ids_list list of feature indice
        * \param[in] labels the sequence of true labels
        */
-      void fit( const std::vector< std::vector< int > >& feature_ids_list,
-              const std::vector< std::string >& labels);
+      void fit(const std::vector< std::vector<int> >& feature_ids_list,
+              const std::vector<std::string>& labels);
 
       /*! updates weight vector
        * \param[in] true_path the sequence of true labels
        * \param[in] pred_path the sequence of predicted labels
        */
-      void update(const std::vector< node_ptr >& true_path,
-              const std::vector< node_ptr >& pred_path);
+      void update(const std::vector<node_ptr>& true_path,
+              const std::vector<node_ptr>& pred_path);
 
       /*! updates weight vector
        * \param[in] feature_ids the sequence of feature indice
        * \param[out] nodes the sequence of nodes that hold labels
        */
-      std::vector< node_ptr >
+      std::vector<node_ptr>
       predict(const std::vector< std::vector< int > >& feature_ids);
 
       /*! updates weight vector
@@ -90,7 +95,7 @@ class StructuredPerceptron {
       std::vector<node_ptr>
       predict(std::vector<node_ptr>& nodes);
 
-      std::vector<node_ptr>
+      std::vector< std::vector<node_ptr> >
       nbest(std::vector<node_ptr>& nodes, int beam_width);
 
       /*! updates weight vector
@@ -114,7 +119,8 @@ class StructuredPerceptron {
        */
       void print_w();
 
-    private:
+//    private:
+    protected:
       /*! the dictionary of labels */
       Dictionary label_dic;
 
@@ -128,6 +134,8 @@ class StructuredPerceptron {
        * \param[in] node a node of which score is calculated.
       */
       void fire(node_ptr node);
+
+      void _fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
 };
 
 } // namespace strpercpp

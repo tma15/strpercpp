@@ -2,6 +2,7 @@
 lib_LTLIBRARIES = libstrpercpp.la
 libstrpercpp_la_SOURCES = \
 	dictionary.hpp dictionary.cpp \
+	early_update_perceptron.hpp early_update_perceptron.cpp \
 	corpus.hpp corpus.cpp \
 	node.hpp node.cpp \
 	viterbi.hpp viterbi.cpp \
@@ -15,6 +16,7 @@ pkginclude_HEADERS = \
 	argparse.h \
 	corpus.hpp \
 	dictionary.hpp \
+	early_update_perceptron.hpp \
 	feature_template.hpp \
 	lattice.hpp \
 	matrix.hpp \

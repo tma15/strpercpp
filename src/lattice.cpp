@@ -75,39 +75,28 @@ std::vector<node_ptr> beamsearch(std::vector<node_ptr>& nodes, int beam_width) {
       node_ptr node = pq.top();
       pq.pop();
 
-//      printf("base: ");
-//      print_label_seq(node);
-
       for (node_ptr n = nodes[t]; n != NULL; n = n->bnext) {
         node_ptr n_curr = std::make_shared<Node>(*node);
         node_ptr n_ = std::make_shared<Node>(*n);
         n_->prev = n_curr;
         n_->path_score = n_curr->path_score + n_->score;
         next_pq.push(n_);
-
-//        printf("size:%d add: ", next_pq.size());
-//        print_label_seq(n_);
       }
     }
 
     while (next_pq.size() > beam_width) {
       node_ptr n = next_pq.top();
-//      printf("size:%d remove: ", next_pq.size());
-//      print_label_seq(n);
       next_pq.pop();
     }
     pq = next_pq;
   }
 
-//  printf("last pq size:%d\n", pq.size());
   std::vector<node_ptr> nbest(beam_width);
   int i = 0;
   while (!pq.empty()) {
     node_ptr n = pq.top();
     nbest[beam_width - 1 - i] = n;
     i += 1;
-//    printf("%d pop path score:%f\n", pq.size(), n->path_score);
-//    print_label_seq(n);
     pq.pop();
   }
   return nbest;
