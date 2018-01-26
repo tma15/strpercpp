@@ -7,6 +7,8 @@
 #include "strpercpp/structured_perceptron.hpp"
 #include "strpercpp/viterbi.hpp"
 
+#include "test.h"
+
 using namespace strpercpp;
 
 void test_argparse() {
@@ -14,9 +16,8 @@ void test_argparse() {
   ArgParser parser = ArgParser();
 
 
-  int argc = 8;
-  char const* argv[] = {"train_strpercpp", "-e", "10",
-    "--update", "0", "train.txt", "template", "model"};
+  int argc = 6;
+  char const* argv[] = {"train_strpercpp", "-e", "10", "train.txt", "template", "model"};
 
   parser.add_argument("-e", "10", "number of epoch");
   parser.add_argument("--update", "0", "updating rule");
@@ -24,9 +25,6 @@ void test_argparse() {
   parser.add_argument("template_file", "b");
   parser.add_argument("model_file", "c");
   parser.parse_args(argc, argv);
-
-//  parser.print_help();
-
 
   int expected1 = 10;
   int epoch = parser.get<int>("e");
@@ -134,13 +132,14 @@ void test_lattice() {
 }
 
 int main(int argc, char const* argv[]) {
-  Dictionary dict;
-  FeatureTemplate tmpl;
-  StructuredPerceptron model;
+//  Dictionary dict;
+//  FeatureTemplate tmpl;
+//  StructuredPerceptron model;
 
 //  test_pq();
 //  test_lattice();
   test_argparse();
+  test_early_update();
   
   return 0;
 }
