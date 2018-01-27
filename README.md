@@ -53,16 +53,8 @@ accuracy:  94.02%; precision:  89.33%; recall:  90.78%; FB1:  90.05
 
 Results of existing models are listed in [this page](https://www.clips.uantwerpen.be/conll2000/chunking/).
 
-### NLP tutorial
-#### Data preparation
-```sh
-git clone https://github.com/neubig/nlptutorial.git ~/nlpdata
-python scripts/convert_data_format.py < ~/nlptutorial/data/wiki-en-train.norm_pos > ./convert_data_format.py > train.data
-python scripts/convert_data_format.py < ~/nlptutorial/data/wiki-en-test.norm_pos > test.data
-```
-
-#### Training and evaluation
-```sh
-train_strpercpp -e 3 train.data template model
-test_strpercpp model test.data
-```
+## References
+- Michael Collins, "Discriminative Training Methods
+for Hidden Markov Models: Theory and Experiments
+with Perceptron Algorithms.", EMNLP, 2002.
+- Michael Collins and Brian Roark, "Incremental Parsing with the Perceptron Algorithm", ACL, 2004.
