@@ -6,7 +6,6 @@
 #include "viterbi.hpp"
 
 namespace strpercpp {
-    
 
 void viterbi(std::vector<node_ptr>& nodes) {
   for (int i=1; i < nodes.size(); ++i) {
@@ -31,11 +30,12 @@ void viterbi(std::vector<node_ptr>& nodes) {
       curr_n->prev = best_node;
       curr_n->path_score = best_score;
     }
+//    printf("%d/%d\n", i, nodes.size());
   }
 };
 
 
-std::vector< node_ptr > backtrack(std::vector< node_ptr >& nodes) {
+std::vector<node_ptr> backtrack(std::vector<node_ptr>& nodes) {
   if (nodes.size() == 0) {
     std::cerr << "nodes.size()==0" << std::endl;
     exit(1);
@@ -52,8 +52,8 @@ std::vector< node_ptr > backtrack(std::vector< node_ptr >& nodes) {
   return path;
 };
 
-std::vector< node_ptr >
-true_path(std::vector< node_ptr >& nodes,
+std::vector<node_ptr>
+true_path(std::vector<node_ptr>& nodes,
     const std::vector<int>& true_label_ids) {
 
   int size_path = nodes.size() - 2;

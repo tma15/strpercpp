@@ -18,6 +18,7 @@ int main(int argc, char const* argv[]) {
   argparse::ArgParser parser;
   parser.add_argument("-e", "3", "number of epoch");
   parser.add_argument("--update", "full", "updating rule");
+  parser.add_argument("--beam", "5", "width of beam for beamsearch based learner");
   parser.add_argument("train_file", "training file");
   parser.add_argument("template_file", "template file");
   parser.add_argument("model_file", "model file");
@@ -57,6 +58,9 @@ int main(int argc, char const* argv[]) {
     perc = new StructuredPerceptron(feature_dic, label_dic);
   } else if (update_rule == "greedy-earlyupdate") {
     perc = new GreedyEarlyUpdate(feature_dic, label_dic);
+  } else if (update_rule == "beam-earlyupdate") {
+    int beam_width = parser.get<int>("beam");
+    perc = new BeamEarlyUpdate(feature_dic, label_dic, beam_width);
   }
 
   perc->set_template(tmpl);
