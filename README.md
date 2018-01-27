@@ -1,12 +1,22 @@
 # strperc++
 A C++ implementation of structured perceptron
 
+## Requirements
+- [googletest](https://github.com/google/googletest/tree/master/googletest) (Optional. This is used for unit tests.)
+
 ## Install
 ```sh
 autoreconf -iv
 ./configure --prefix=/path/to/install
 make
 make install
+```
+
+For unit testing,
+```sh
+autoreconf -iv
+./configure --prefix=/path/to/install --with-gtest=/path/to/gtest
+make check ### for unit tests
 ```
 
 ## Data format

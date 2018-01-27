@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include <strpercpp/early_update_perceptron.hpp>
+#include "../src/early_update_perceptron.hpp"
 
 #include "test.h"
 

@@ -13,6 +13,16 @@ AC_PROG_LIBTOOL
 AC_PROG_CXX([])
 
 # Checks for libraries.
+AC_ARG_WITH([gtest],
+	    AS_HELP_STRING([--with-gtest=PATH], [path to googletest]),
+	    [GTEST_PATH=$withval],
+	    [GTEST_PATH=no]
+	    )
+AC_SUBST(GTEST_PATH)
+AM_CONDITIONAL(HAS_GTEST, test x"${GTEST_PATH}" != xno)
+AC_MSG_CHECKING([Checking GTEST_PATH: ${GTEST_PATH}])
+AC_MSG_CHECKING([Checking HAS_GTEST: ${HAS_GTEST}])
+
 
 # Checks for header files.
 

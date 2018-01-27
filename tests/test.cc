@@ -1,11 +1,13 @@
-#include "strpercpp/argparse.h"
-#include "strpercpp/corpus.hpp"
-#include "strpercpp/dictionary.hpp"
-#include "strpercpp/feature_template.hpp"
-#include "strpercpp/lattice.hpp"
-#include "strpercpp/node.hpp"
-#include "strpercpp/structured_perceptron.hpp"
-#include "strpercpp/viterbi.hpp"
+#include "../src/argparse.h"
+#include "../src/corpus.hpp"
+#include "../src/dictionary.hpp"
+#include "../src/feature_template.hpp"
+#include "../src/lattice.hpp"
+#include "../src/node.hpp"
+#include "../src/structured_perceptron.hpp"
+#include "../src/viterbi.hpp"
+
+#include <gtest/gtest.h>
 
 #include "test.h"
 
@@ -107,7 +109,7 @@ void test_lattice() {
       node->Y = j;
 
       node_ptr next_node;
-      for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
+      for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
         next_node = n;
       }
       next_node->bnext = node;

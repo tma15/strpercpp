@@ -6,6 +6,7 @@ src/*.la
 src/.*
 src/test_strpercpp
 src/train_strpercpp
+tests/Makefile.in
 
 aclocal.m4
 autom4te.cache
