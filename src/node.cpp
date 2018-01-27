@@ -1,5 +1,3 @@
-//#include <unordered_set>
-
 #include "node.hpp"
 
 namespace strpercpp {
