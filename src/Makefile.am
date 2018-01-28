@@ -25,10 +25,15 @@ pkginclude_HEADERS = \
 	util.hpp \
 	viterbi.hpp 
 
-
 bin_PROGRAMS = train_strpercpp test_strpercpp
 train_strpercpp_SOURCES = train_strpercpp.cpp
 train_strpercpp_LDADD = libstrpercpp.la
+
+if HAS_GPERF
+train_strpercpp_CXXFLAGS = -lprofiler -L@GPERF_PATH@/lib
+else
+train_strpercpp_CXXFLAGS = 
+endif
 
 test_strpercpp_SOURCES = test_strpercpp.cpp
 test_strpercpp_LDADD = libstrpercpp.la

@@ -20,9 +20,18 @@ AC_ARG_WITH([gtest],
 	    )
 AC_SUBST(GTEST_PATH)
 AM_CONDITIONAL(HAS_GTEST, test x"${GTEST_PATH}" != xno)
-AC_MSG_CHECKING([Checking GTEST_PATH: ${GTEST_PATH}])
-AC_MSG_CHECKING([Checking HAS_GTEST: ${HAS_GTEST}])
+AC_MSG_NOTICE([GTEST_PATH: ${GTEST_PATH}])
+AC_MSG_NOTICE([HAS_GTEST: ${HAS_GTEST}])
 
+AC_ARG_WITH([gperf],
+	    AS_HELP_STRING([--with-gperf=PATH], [path to gperf-tools]),
+	    [GPERF_PATH=$withval],
+	    [GPERF_PATH=no]
+	    )
+AC_SUBST(GPERF_PATH)
+AM_CONDITIONAL(HAS_GPERF, test x"${GPERF_PATH}" != xno)
+AC_MSG_NOTICE([GPERF_PATH: ${GPERF_PATH}])
+AC_MSG_NOTICE([HAS_GPERF: ${HAS_GPERF}])
 
 # Checks for header files.
 
