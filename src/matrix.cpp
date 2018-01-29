@@ -18,7 +18,7 @@ float& Matrix::operator() (int i, int j) {
     return this->matrix_[i][j];
 }
 
-std::vector<float> Matrix::operator[] (int row) {
+const std::vector<float>& Matrix::operator[] (int row) {
     return this->matrix_[row];
 };
 

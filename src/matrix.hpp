@@ -31,7 +31,7 @@ class Matrix {
     /*! returns the weight vector associated with the index of a feature.
      *  \param[out] vec weight vetctor associated with a feature
      */
-    std::vector<float> operator[] (int row);
+    const std::vector<float>& operator[] (int row);
 
     /*! reshapes matrix
      * \param[in] row index of row

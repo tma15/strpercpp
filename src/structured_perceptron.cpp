@@ -34,7 +34,7 @@ void StructuredPerceptron::fire(node_ptr node) {
   int yid = node->Y;
 
   if (yid < label_dic.size()) {
-    const std::vector<float> w_y = this->w[yid];
+    const std::vector<float>& w_y = this->w[yid];
     for (int i=0; i < num_features; ++i) {
       int fid = node->feature_ids[i];
       float w_f = w_y[fid];
