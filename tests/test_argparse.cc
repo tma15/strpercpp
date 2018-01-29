@@ -9,17 +9,19 @@
 
 #include <gtest/gtest.h>
 
-#include "test.h"
+
+namespace {
 
 using namespace strpercpp;
 
-void test_argparse() {
+TEST(TestArgParse, ParseArgs) {
   using namespace argparse;
   ArgParser parser = ArgParser();
 
 
   int argc = 6;
-  char const* argv[] = {"train_strpercpp", "-e", "10", "train.txt", "template", "model"};
+  char* argv[] = {(char*)"train_strpercpp", (char*)"-e",
+    (char*)"10", (char*)"train.txt", (char*)"template", (char*)"model"};
 
   parser.add_argument("-e", "10", "number of epoch");
   parser.add_argument("--update", "0", "updating rule");
@@ -30,28 +32,19 @@ void test_argparse() {
 
   int expected1 = 10;
   int epoch = parser.get<int>("e");
-  if (epoch != expected1) {
-    printf("error1\n");
-  }
+  EXPECT_EQ(expected1, epoch);
 
   int expected2 = 0;
   int got2 = parser.get<int>("update");
-  if (got2 != expected2) {
-    printf("error2 got:%d\n", got2);
-  }
+  EXPECT_EQ(expected2, got2);
 
   std::string expected3 = "train.txt";
   std::string got3 = parser.get<std::string>("train_file");
-  if (got3 != expected3) {
-    printf("error3 got:%s\n", got3.c_str());
-  }
+  EXPECT_EQ(expected3, got3);
 
   std::string expected4 = "template";
   std::string got4 = parser.get<std::string>("template_file");
-  if (got4 != expected4) {
-    printf("error4 got:%s\n", got4.c_str());
-  }
-
+  EXPECT_EQ(expected4, got4);
 }
 
 void test_pq() {
@@ -75,7 +68,6 @@ void test_pq() {
 
   while (!pq.empty()) {
     node_ptr n = pq.top();
-//    printf("n score:%f\n", n->path_score);
     pq.pop();
   }
 
@@ -133,15 +125,5 @@ void test_lattice() {
 
 }
 
-int main(int argc, char const* argv[]) {
-//  Dictionary dict;
-//  FeatureTemplate tmpl;
-//  StructuredPerceptron model;
+} // namespace
 
-//  test_pq();
-//  test_lattice();
-  test_argparse();
-  test_early_update();
-  
-  return 0;
-}
