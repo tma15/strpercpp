@@ -27,7 +27,7 @@ std::vector<node_ptr> build_lattice(int label_size,
         nodes[i+1] = node;
       } else {
         node_ptr next_node;
-        for (node_ptr n = nodes[i+1]; n != NULL; n = n->bnext) {
+        for (node_ptr n = (*nodes)[i+1]; n != nullptr; n = n->bnext) {
           next_node = n;
         }
         next_node->bnext = node;
@@ -44,7 +44,7 @@ std::vector<node_ptr> build_lattice(int label_size,
 
 void print_label_seq(node_ptr n) {
   printf("path score:%.2f, ", n->path_score);
-  while (n != NULL) {
+  while (n != nullptr) {
     printf("%d ", n->Y);
     n = n->prev;
   }
@@ -75,7 +75,7 @@ std::vector<node_ptr> beamsearch(std::vector<node_ptr>& nodes, int beam_width) {
       node_ptr node = pq.top();
       pq.pop();
 
-      for (node_ptr n = nodes[t]; n != NULL; n = n->bnext) {
+      for (node_ptr n = nodes[t]; n != nullptr; n = n->bnext) {
         node_ptr n_curr = std::make_shared<Node>(*node);
         node_ptr n_ = std::make_shared<Node>(*n);
         n_->prev = n_curr;

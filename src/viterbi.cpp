@@ -9,11 +9,11 @@ namespace strpercpp {
 
 void viterbi(std::vector<node_ptr>& nodes) {
   for (int i=1; i < nodes.size(); ++i) {
-    for (node_ptr curr_n = nodes[i]; curr_n != NULL; curr_n = curr_n->bnext) {
+    for (node_ptr curr_n = nodes[i]; curr_n != nullptr; curr_n = curr_n->bnext) {
       node_ptr best_node;
       float best_score;
       bool is_new = true;
-      for (node_ptr prev_n = nodes[i-1]; prev_n != NULL; prev_n = prev_n->bnext) {
+      for (node_ptr prev_n = nodes[i-1]; prev_n != nullptr; prev_n = prev_n->bnext) {
         float score = prev_n->path_score + curr_n->score;
         if (score > best_score || is_new) {
           best_score = score;
@@ -30,7 +30,7 @@ void viterbi(std::vector<node_ptr>& nodes) {
       curr_n->prev = best_node;
       curr_n->path_score = best_score;
     }
-//    printf("%d/%d\n", i, nodes.size());
+//    printf("viterbi %d/%d\n", i, nodes.size());
   }
 };
 
@@ -62,7 +62,7 @@ true_path(std::vector<node_ptr>& nodes,
   for (int k=0; k < true_label_ids.size(); ++k) {
     int i = k + 1;
     bool found = false;
-    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
+    for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
       if (n.get()->Y == true_label_ids[i-1]) {
         path[i-1] = n;
         found = true;

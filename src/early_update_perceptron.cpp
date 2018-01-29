@@ -5,10 +5,10 @@
 namespace strpercpp {
 
 void GreedyEarlyUpdate::_fit(std::vector<node_ptr>& nodes,
-    std::vector<node_ptr>& true_path_) {
+    std::vector<node_ptr>& true_path) {
 
   for (int i=0; i < nodes.size(); ++i) {
-    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
+    for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
       this->fire(n);
     }
   }
@@ -17,16 +17,16 @@ void GreedyEarlyUpdate::_fit(std::vector<node_ptr>& nodes,
     node_ptr best_n_curr = nodes[i];
 
     /* best one-step extention based on history */
-    for (node_ptr curr_n = nodes[i]; curr_n != NULL; curr_n = curr_n->bnext) {
+    for (node_ptr curr_n = nodes[i]; curr_n != nullptr; curr_n = curr_n->bnext) {
       node_ptr best_n_prev;
       float best_score;
-      bool is_new = true;
-      for (node_ptr prev_n = nodes[i-1]; prev_n != NULL; prev_n = prev_n->bnext) {
+      bool is_first = true;
+      for (node_ptr prev_n = nodes[i-1]; prev_n != nullptr; prev_n = prev_n->bnext) {
         float score = prev_n->path_score + curr_n->score;
-        if (score > best_score || is_new) {
+        if (score > best_score || is_first) {
           best_score = score;
           best_n_prev = prev_n;
-          is_new = false;
+          is_first = false;
         }
       }
       curr_n->prev = best_n_prev;
@@ -36,16 +36,18 @@ void GreedyEarlyUpdate::_fit(std::vector<node_ptr>& nodes,
       }
     }
 
-    if (best_n_curr->Y != true_path_[i-1]->Y) {
+//    printf("early %d/%d\n", i, nodes.size());
+
+    if (best_n_curr->Y != true_path[i-1]->Y) {
       for (int j=0; j < i; ++j) {
-        node_ptr n = true_path_[j];
+        node_ptr n = true_path[j];
         for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
           int fid = *it;
           this->w(n->Y, fid) += 1.;
         }
       }
 
-      for (node_ptr n = best_n_curr; n != NULL; n = n->prev) {
+      for (node_ptr n = best_n_curr; n != nullptr; n = n->prev) {
         for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
           int fid = *it;
           this->w(n->Y, fid) -= 1.;
@@ -53,33 +55,25 @@ void GreedyEarlyUpdate::_fit(std::vector<node_ptr>& nodes,
       }
       break;
     }
-//    printf("t:%d/%d\n", i, nodes.size()-1);
   }
   nodes.clear();
 };
 
 
-void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_) {
-  for (int i=0; i < nodes.size(); ++i) {
-    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
-      this->fire(n);
-    }
-  }
-
+void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path) {
   node_ptr_queue pq;
   pq.push(nodes[0]);
 
   int len_seq = nodes.size();
 
   for (int t=1; t < nodes.size(); ++t) {
-//    printf("t=%d\n", t);
 
     node_ptr_queue next_pq;
     while (!pq.empty()) {
       node_ptr node = pq.top();
       pq.pop();
 
-      for (node_ptr n = nodes[t]; n != NULL; n = n->bnext) {
+      for (node_ptr n = nodes[t]; n != nullptr; n = n->bnext) {
         node_ptr n_curr = std::make_shared<Node>(*node);
         node_ptr n_ = std::make_shared<Node>(*n);
         n_->prev = n_curr;
@@ -95,7 +89,7 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
 
       /* if falls off beam, then update paramter */
       std::vector<int> ys;
-      while (n->prev != NULL) {
+      while (n->prev != nullptr) {
         ys.push_back(n->Y);
         n = n->prev;
       }
@@ -107,7 +101,7 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
 
       bool is_true = true;
       for (int t=0; t < ys.size(); ++t) {
-        if (ys[ys.size()-t-1] != true_path_[t]->Y) {
+        if (ys[ys.size()-t-1] != true_path[t]->Y) {
           is_true = false;
         }
       }
@@ -116,7 +110,7 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
         updated = true;
 //        printf("out of beam t=%d\n", t);
         for (int j=0; j < t; ++j) {
-          node_ptr n = true_path_[j];
+          node_ptr n = true_path[j];
           for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
             int fid = *it;
             this->w(n->Y, fid) += 1.;
@@ -129,7 +123,7 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
           next_pq.pop();
         }
 
-        for (node_ptr n = n_max; n != NULL; n = n->prev) {
+        for (node_ptr n = n_max; n != nullptr; n = n->prev) {
           for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
             int fid = *it;
             this->w(n->Y, fid) -= 1.;
@@ -143,7 +137,6 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
     pq = next_pq;
   }
 
-  nodes.clear();
 };
 
 

@@ -137,7 +137,7 @@ std::vector<node_ptr> StructuredPerceptron::predict(
 std::vector<node_ptr>
 StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
   for (int i=0; i < nodes.size(); ++i) {
-    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
+    for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
       this->fire(n);
     }
   }
@@ -150,7 +150,7 @@ StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
 std::vector< std::vector<node_ptr> >
 StructuredPerceptron::nbest(std::vector<node_ptr>& nodes, int beam_width) {
   for (int i=0; i < nodes.size(); ++i) {
-    for (node_ptr n = nodes[i]; n != NULL; n = n->bnext) {
+    for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
       this->fire(n);
     }
   }
