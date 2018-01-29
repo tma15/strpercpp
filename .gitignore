@@ -1,5 +1,6 @@
 *.swp
 *.o
+*.Po
 src/*.o
 src/*.lo
 src/*.la
@@ -12,6 +13,7 @@ aclocal.m4
 autom4te.cache
 compile
 config.*
+configure
 depcomp
 install-sh
 libtool
