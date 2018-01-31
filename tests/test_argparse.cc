@@ -47,31 +47,6 @@ TEST(TestArgParse, ParseArgs) {
   EXPECT_EQ(expected4, got4);
 }
 
-void test_pq() {
-  node_ptr_queue pq;
-
-  node_ptr n1(new Node());
-  n1->path_score = 5;
-  pq.push(n1);
-
-  node_ptr n2(new Node());
-  n2->path_score = 4;
-  pq.push(n2);
-
-  node_ptr n3(new Node());
-  n3->path_score = 2;
-  pq.push(n3);
-
-  node_ptr n4(new Node());
-  n4->path_score = 7;
-  pq.push(n4);
-
-  while (!pq.empty()) {
-    node_ptr n = pq.top();
-    pq.pop();
-  }
-
-}
 
 void test_lattice() {
   Node node;
