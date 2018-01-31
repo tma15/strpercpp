@@ -3,21 +3,16 @@ A C++ implementation of structured perceptron
 
 ## Requirements
 - [googletest](https://github.com/google/googletest/tree/master/googletest) (Optional. This is used for unit tests.)
+- [gperftools](https://github.com/gperftools/gperftools) (Optional. This is used for profiling)
 
 ## Install
 ```sh
-autoreconf -iv
-./configure --prefix=/path/to/install
-make
-make install
+$ autoreconf -iv
+$ ./configure --prefix=/path/to/install
+$ make
+$ make install
 ```
 
-For unit testing,
-```sh
-autoreconf -iv
-./configure --prefix=/path/to/install --with-gtest=/path/to/gtest
-make check ### for unit tests
-```
 
 ## Data format
 ```
@@ -28,9 +23,11 @@ make check ### for unit tests
 
 ```
 
+## Template format
+
 ## Examples
 ### CONLL2000
-You can download one of famous benchmark data of chunking as follows:
+You can download one of famous benchmark data of text chunking as follows:
 ```sh
 $ cd scripts
 $ ./download_conll2000.sh
@@ -62,6 +59,24 @@ accuracy:  94.02%; precision:  89.33%; recall:  90.78%; FB1:  90.05
 ```
 
 Results of existing models are listed in [this page](https://www.clips.uantwerpen.be/conll2000/chunking/).
+
+## Development
+For unit testing,
+```sh
+$ autoreconf -iv
+$ ./configure --prefix=/path/to/install --with-gtest=/path/to/gtest
+$ make check
+```
+
+Profiling result is obtained as follows:
+```sh
+$ autoreconf -iv
+$ ./configure --prefix=/path/to/install --with-gperf=/path/to/gperf
+$ make
+$ make install
+$ export CPUPROFILE=prof.out; time /path/to/install/bin/train_strpercpp [options]
+$ pprof /path/to/install/bin/train_strpercpp prof.out
+```
 
 ## References
 - Michael Collins, "Discriminative Training Methods

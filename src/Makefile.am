@@ -12,6 +12,12 @@ libstrpercpp_la_SOURCES = \
 	util.hpp util.cpp \
 	structured_perceptron.hpp structured_perceptron.cpp
 
+if HAS_GPERF
+libstrpercpp_la_LDFLAGS = -g -lprofiler -L@GPERF_PATH@/lib
+else
+libstrpercpp_la_LDFLAGS =
+endif
+
 pkginclude_HEADERS = \
 	argparse.h \
 	corpus.hpp \
@@ -30,8 +36,10 @@ train_strpercpp_SOURCES = train_strpercpp.cpp
 train_strpercpp_LDADD = libstrpercpp.la
 
 if HAS_GPERF
-train_strpercpp_CXXFLAGS = -lprofiler -L@GPERF_PATH@/lib
+train_strpercpp_LDFLAGS = -lprofiler -L@GPERF_PATH@/lib
+train_strpercpp_CXXFLAGS = -I@GPERF_PATH@/include 
 else
+train_strpercpp_LDFLAGS = 
 train_strpercpp_CXXFLAGS = 
 endif
 
