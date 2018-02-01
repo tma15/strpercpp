@@ -6,15 +6,13 @@
 namespace strpercpp {
     
 
-std::vector<node_ptr> build_lattice(int label_size,
-    const std::vector< std::vector<int> >& feature_ids) {
-
-  std::vector<node_ptr> nodes(feature_ids.size()+2);
+void build_lattice(int label_size, const std::vector< std::vector<int> >& feature_ids,
+    std::vector<node_ptr>* nodes) {
 
   node_ptr bos(new Node());
   bos->label = corpus::BOS;
   bos->Y = 0;
-  nodes[0] = bos;
+  (*nodes)[0] = bos;
 
   for (int i=0; i < feature_ids.size(); ++i) {
     for (int j=0; j < label_size; ++j) {
@@ -24,7 +22,7 @@ std::vector<node_ptr> build_lattice(int label_size,
       node->Y = j;
 
       if (j==0) {
-        nodes[i+1] = node;
+        (*nodes)[i+1] = node;
       } else {
         node_ptr next_node;
         for (node_ptr n = (*nodes)[i+1]; n != nullptr; n = n->bnext) {
@@ -38,8 +36,7 @@ std::vector<node_ptr> build_lattice(int label_size,
   node_ptr eos(new Node());
   eos->label = corpus::EOS;
   eos->Y = 1;
-  nodes[nodes.size()-1] = eos;
-  return nodes;
+  (*nodes)[nodes->size()-1] = eos;
 };
 
 void print_label_seq(node_ptr n) {
@@ -71,6 +68,7 @@ std::vector<node_ptr> beamsearch(std::vector<node_ptr>& nodes, int beam_width) {
   for (int t=1; t < nodes.size(); ++t) {
 
     node_ptr_queue next_pq;
+    node_ptr_queue next_pq_tmp;
     while (!pq.empty()) {
       node_ptr node = pq.top();
       pq.pop();
@@ -80,13 +78,22 @@ std::vector<node_ptr> beamsearch(std::vector<node_ptr>& nodes, int beam_width) {
         node_ptr n_ = std::make_shared<Node>(*n);
         n_->prev = n_curr;
         n_->path_score = n_curr->path_score + n_->score;
-        next_pq.push(n_);
+        next_pq_tmp.push(n_);
       }
     }
 
-    while (next_pq.size() > beam_width) {
-      node_ptr n = next_pq.top();
-      next_pq.pop();
+//    while (next_pq.size() > beam_width) {
+//      node_ptr n = next_pq.top();
+//      next_pq.pop();
+//    }
+
+    // 次のキューがbeam_width以下、かつnext_pq_tmpが空でない間
+    while (next_pq.size() < beam_width && !next_pq_tmp.empty()) {
+//      printf("next_pq:%d tmp:%d\n", next_pq.size(), next_pq_tmp.size());
+      node_ptr n = next_pq_tmp.top();
+      next_pq_tmp.pop();
+
+      next_pq.push(n);
     }
     pq = next_pq;
   }

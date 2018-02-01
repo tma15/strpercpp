@@ -21,14 +21,14 @@ void eval(std::string test_file,
 
   std::vector< std::vector< std::vector< std::string > > > sequences;
   std::vector< std::vector< std::string > > labels;
-  std::vector< std::vector< node_ptr > > nodes_list;
-  std::vector< std::vector< node_ptr > > true_path_list;
 
   Corpus corpus;
-  bool train = false;
 
   corpus.read(test_file, &feature_dic, &label_dic, &sequences, &labels);
   
+  bool train = false;
+  std::vector< std::vector<node_ptr> > nodes_list(sequences.size());
+  std::vector< std::vector<node_ptr> > true_path_list(sequences.size());
   corpus.build_lattices(
           &feature_dic, label_dic,
           sequences, labels,
@@ -112,7 +112,8 @@ void eval(std::string test_file,
 
 };
 
-int main(int argc, char const* argv[]) {
+//int main(int argc, char const* argv[]) {
+int main(int argc, char* argv[]) {
   argparse::ArgParser parser;
   parser.add_argument("-v", "0", "verbose mode");
   parser.add_argument("-b", "width of beam");

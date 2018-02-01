@@ -14,7 +14,7 @@
 using namespace strpercpp;
 
 
-int main(int argc, char const* argv[]) {
+int main(int argc, char* argv[]) {
   argparse::ArgParser parser;
   parser.add_argument("-e", "3", "number of epoch");
   parser.add_argument("--update", "full", "updating rule");
@@ -42,14 +42,14 @@ int main(int argc, char const* argv[]) {
 
   std::vector< std::vector< std::vector<std::string> > > sequences;
   std::vector< std::vector<std::string> > labels;
-  std::vector< std::vector<node_ptr> > nodes_list;
-  std::vector< std::vector<node_ptr> > true_path_list;
 
   std::vector<FeatureTemplate> tmpl = read_template_file(template_file.c_str());
   Corpus corpus;
   corpus.read(train_file, &feature_dic, &label_dic, &sequences, &labels);
 
   bool train = true;
+  std::vector< std::vector<node_ptr> > nodes_list(sequences.size());
+  std::vector< std::vector<node_ptr> > true_path_list(sequences.size());
   corpus.build_lattices(&feature_dic, label_dic,
       sequences, labels, tmpl, &nodes_list, &true_path_list, train);
 
@@ -69,13 +69,20 @@ int main(int argc, char const* argv[]) {
   std::cout << "#labels: " << label_dic.size() << std::endl;
   std::cout << "#features: " << feature_dic.size() << std::endl;
 
+
+  clock_t acc_start = clock();
   for (int e=0; e < epoch; ++e) {
     std::cout << "epoch:" << e+1 << "/" << epoch << std::endl;
     for (int i=0; i < nodes_list.size(); ++i) {
       std::vector< node_ptr > nodes = nodes_list[i];
       std::vector< node_ptr > true_path_ = true_path_list[i];
 
+      clock_t start = clock();
       perc->fit(nodes, true_path_);
+      clock_t end = clock();
+      float dur = (float) (end - start) / CLOCKS_PER_SEC;
+      float acc_dur = (float) (end - acc_start) / CLOCKS_PER_SEC;
+//      printf("%d acc:%.2f dur:%.2f [sec]\n", i, acc_dur, dur);
     }
   }
 

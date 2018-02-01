@@ -7,8 +7,11 @@
 
 namespace strpercpp {
 
-std::vector<node_ptr>
-build_lattice(int label_size, const std::vector< std::vector<int> >& feature_ids);
+//std::vector<node_ptr>
+//build_lattice(int label_size, const std::vector< std::vector<int> >& feature_ids);
+void build_lattice(int label_size,
+    const std::vector< std::vector<int> >& feature_ids,
+    std::vector<node_ptr>* nodes);
 
 void print_label_seq(node_ptr n);
 
