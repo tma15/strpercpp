@@ -57,11 +57,10 @@ Corpus::Corpus() {
 };
 
 
-void Corpus::read(
-        const std::string& filename,
-        Dictionary* feature_dict, Dictionary* label_dict,
-        std::vector< std::vector< std::vector< std::string > > >* sequences,
-        std::vector< std::vector< std::string > >* labels) {
+void Corpus::read(const std::string& filename,
+    Dictionary* feature_dict, Dictionary* label_dict,
+    std::vector< std::vector< std::vector< std::string > > >* sequences,
+    std::vector< std::vector< std::string > >* labels) {
   std::ifstream ifs(filename);
 
   if (ifs.fail()) {
@@ -71,7 +70,7 @@ void Corpus::read(
   if (!label_dict->has(corpus::BOS)) {
     label_dict->add(corpus::BOS);
   }
-  if (!label_dict->has(corpus::BOS)) {
+  if (!label_dict->has(corpus::EOS)) {
     label_dict->add(corpus::EOS);
   }
 
