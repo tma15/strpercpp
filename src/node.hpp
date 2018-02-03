@@ -47,9 +47,8 @@ typedef std::shared_ptr<Node> node_ptr;
 class NodeCompare {
   public:
     bool operator() (node_ptr a, node_ptr b) {
-//      printf("   a:%f b:%f\n", a->path_score, b->path_score);
-      return a->path_score > b->path_score;
-//      return a->path_score < b->path_score;
+//      return a->path_score > b->path_score;
+      return a->path_score < b->path_score;
     }
 };
 

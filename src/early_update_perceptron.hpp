@@ -11,46 +11,47 @@ namespace strpercpp {
 
 class GreedyEarlyUpdate: public StructuredPerceptron {
   public:
-      GreedyEarlyUpdate(){};
+    GreedyEarlyUpdate(){};
 
-      ~GreedyEarlyUpdate(){};
+    ~GreedyEarlyUpdate(){};
 
-      GreedyEarlyUpdate(Dictionary& _feature_dic, Dictionary& _label_dic):
-        StructuredPerceptron(_feature_dic, _label_dic) {
-      };
-      
-      void fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_) {
-        _fit(nodes, true_path_);
-      };
+    GreedyEarlyUpdate(Dictionary& _feature_dic, Dictionary& _label_dic):
+      StructuredPerceptron(_feature_dic, _label_dic) {
+    };
+    
+    void fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_) {
+      _fit(nodes, true_path_);
+    };
 
   private:
-      void _fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
+    void _fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
 };
 
 class BeamEarlyUpdate: public StructuredPerceptron {
   public:
-      BeamEarlyUpdate(): beam_width_(5) {};
+    BeamEarlyUpdate(): beam_width_(5) {};
 
-      BeamEarlyUpdate(int beam_width): beam_width_(beam_width) {};
+    BeamEarlyUpdate(int beam_width): beam_width_(beam_width) {};
 
-      ~BeamEarlyUpdate(){};
+    ~BeamEarlyUpdate(){};
 
-      BeamEarlyUpdate(Dictionary& _feature_dic, Dictionary& _label_dic):
-        StructuredPerceptron(_feature_dic, _label_dic), beam_width_(5) {
-      };
+    BeamEarlyUpdate(Dictionary& _feature_dic, Dictionary& _label_dic):
+      StructuredPerceptron(_feature_dic, _label_dic), beam_width_(5) {
+    };
 
-      BeamEarlyUpdate(Dictionary& _feature_dic, Dictionary& _label_dic, int beam_width):
-        StructuredPerceptron(_feature_dic, _label_dic), beam_width_(beam_width) {
-      };
-     
-      void fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_) {
-        _fit(nodes, true_path_);
-      };
+    BeamEarlyUpdate(Dictionary& _feature_dic, Dictionary& _label_dic, int beam_width):
+      StructuredPerceptron(_feature_dic, _label_dic), beam_width_(beam_width) {
+    };
+   
+    void fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_) {
+      _fit(nodes, true_path_);
+    };
 
   private:
-      int beam_width_;
+    int beam_width_;
+    void _fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
+};
 
-      void _fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
 
 };
 
