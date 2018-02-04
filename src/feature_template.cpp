@@ -131,14 +131,14 @@ std::vector<FeatureTemplate> read_template_file(const char* filename) {
   return tmpl;
 }
 
-std::vector<int> extract_features(
+void extract_features(
     const std::vector<FeatureTemplate>& tmpl,
     Dictionary* feature_dic,
     const std::vector< std::vector< std::string > >& sequence,
     const int pos,
-    bool train) {
+    bool train,
+    std::vector<int>* features) {
 
-  std::vector<int> features;
   for (int _u=0; _u < tmpl.size(); ++_u) {
     FeatureTemplate u = tmpl[_u];
     std::string prefix = u.prefix;
@@ -148,15 +148,9 @@ std::vector<int> extract_features(
       int feature_type_id = u.feature_type[k];
       std::string s("");
       if (pos + rel_pos < 0) {
-//        printf("!!! ADD BOS pos:%d rel_pos:%d sequencesize:%d\n", pos, rel_pos,
-//            sequence.size());
         s = corpus::BOS;
         f += s;
       } else if (pos + rel_pos >= sequence.size()) {
-//        printf("!!! ADD EOS pos:%d rel_pos:%d sequencesize:%d\n", pos, rel_pos,
-//            sequence.size());
-//        printf("pos+rel_pos:%d sequencesize:%d %d\n", pos + rel_pos, sequence.size(), 
-//            pos+rel_pos>=sequence.size());
         s = corpus::EOS;
         f += s;
       } else {
@@ -170,7 +164,6 @@ std::vector<int> extract_features(
     }
     if (f != "") {
       std::string feature = prefix + ":" + f;
-//      printf("feature:%s\n", feature.c_str());
 
       if (train) {
         if (!feature_dic->has(feature)) {
@@ -180,11 +173,10 @@ std::vector<int> extract_features(
 
       if (feature_dic->has(feature)) {
         int fid = feature_dic->geti(feature);
-        features.push_back(fid);
+        features->push_back(fid);
       }
     }
   }
-  return features;
 };
 
 } // namespace strpercpp

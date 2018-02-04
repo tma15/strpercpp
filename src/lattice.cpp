@@ -11,10 +11,8 @@ void build_lattice(int label_size, const std::vector< std::vector<int> >& featur
 
   for (int i=0; i < feature_ids.size(); ++i) {
     for (int j=0; j < label_size; ++j) {
-      node_ptr node(new Node());
 
-      node->feature_ids = feature_ids[i];
-      node->Y = j;
+      node_ptr node(new Node(feature_ids[i], j));
 
       if (j==0) {
         (*nodes)[i] = node;

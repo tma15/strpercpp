@@ -45,12 +45,12 @@ class FeatureTemplate {
 /*! read all feature templates from a file */
 std::vector<FeatureTemplate> read_template_file(const char* filename);
 
-std::vector<int> extract_features(
-  const std::vector<FeatureTemplate>& tmpl,
+void extract_features(const std::vector<FeatureTemplate>& tmpl,
   Dictionary* feature_dic,
   const std::vector< std::vector< std::string > >& x,
   const int pos,
-  bool train);
+  bool train,
+  std::vector<int>* feature_ids);
 
 } // namespace strpercpp
 

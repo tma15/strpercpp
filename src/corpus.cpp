@@ -113,20 +113,15 @@ void Corpus::build_lattices(
 
   int label_size = label_dict.size();
   for (int i=0; i < sequences.size(); ++i) {
-//    std::vector< std::vector<int> > fids(sequences[i].size());
-    std::vector< std::vector<int> > fids;
+    std::vector< std::vector<int> > fids(sequences[i].size());
     std::vector<int> yids(sequences[i].size());
     for (int j=0; j < sequences[i].size(); ++j) {
       yids[j] = label_dict.geti(labels[i][j]);
 
-      std::vector<int> features = extract_features(
-              tmpl,
-              feature_dict,
-              sequences[i],
-              j,
-              train);
-      fids.push_back(features);
-//      fids[j] = features;
+      std::vector<int> features;
+      extract_features(tmpl, feature_dict, sequences[i], j, train, &features);
+
+      fids[j] = features;
     }
 
     std::vector<node_ptr> nodes(fids.size());
@@ -134,8 +129,6 @@ void Corpus::build_lattices(
 
     std::vector<node_ptr> true_path_ = true_path(nodes, yids);
 
-//    nodes_list->push_back(nodes);
-//    true_path_list->push_back(true_path_);
     (*nodes_list)[i] = nodes;
     (*true_path_list)[i] = true_path_;
   }

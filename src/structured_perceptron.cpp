@@ -45,10 +45,11 @@ void StructuredPerceptron::fire(node_ptr node) {
 
 
 
-void StructuredPerceptron::fit(const std::vector< std::vector< int > >& feature_ids,
+void StructuredPerceptron::fit(const std::vector< std::vector<int> >& feature_ids,
     const std::vector<std::string>& labels) {
 
-  std::vector<node_ptr> nodes = build_lattice(this->label_dic.size(), feature_ids);
+  std::vector<node_ptr> nodes(feature_ids.size());
+  build_lattice(this->label_dic.size(), feature_ids, &nodes);
   this->fit(nodes, labels);
 };
 
@@ -86,8 +87,8 @@ void StructuredPerceptron::_fit(std::vector<node_ptr>& nodes,
 };
 
 
-void StructuredPerceptron::update(const std::vector< node_ptr >& true_path,
-        const std::vector< node_ptr >& pred_path) {
+void StructuredPerceptron::update(const std::vector<node_ptr>& true_path,
+        const std::vector<node_ptr>& pred_path) {
 
   for (int i=0; i < true_path.size(); ++i) {
     node_ptr n = true_path[i];
@@ -106,19 +107,18 @@ void StructuredPerceptron::update(const std::vector< node_ptr >& true_path,
   }
 };
 
-std::vector<node_ptr> StructuredPerceptron::predict(
-        const std::vector< std::vector<std::string> >& sequence) {
+std::vector<node_ptr>
+StructuredPerceptron::predict(const std::vector< std::vector<std::string> >& sequence) {
 
   bool train = false;
   std::vector< std::vector<int> > fids;
   for (int j=0; j < sequence.size(); ++j) {
 
-    std::vector<int> features = extract_features(
-          tmpl,
-          &this->feature_dic,
-          sequence,
-          j,
-          train);
+    std::vector<int> features;
+    extract_features(tmpl, &this->feature_dic, sequence, j, train, &features);
+
+//    std::vector<int> features = extract_features(tmpl,
+//        &this->feature_dic, sequence, j, train);
     fids.push_back(features);
   }
 
@@ -126,10 +126,11 @@ std::vector<node_ptr> StructuredPerceptron::predict(
   return path;
 };
 
-std::vector<node_ptr> StructuredPerceptron::predict(
-        const std::vector< std::vector<int> >& feature_ids) {
+std::vector<node_ptr>
+StructuredPerceptron::predict(const std::vector< std::vector<int> >& feature_ids) {
 
-  std::vector<node_ptr> nodes = build_lattice(this->label_dic.size(), feature_ids);
+  std::vector<node_ptr> nodes(feature_ids.size());
+  build_lattice(this->label_dic.size(), feature_ids, &nodes);
   std::vector<node_ptr> path = this->predict(nodes);
   return path;
 };

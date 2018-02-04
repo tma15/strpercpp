@@ -39,6 +39,9 @@ class Node {
     float path_score;
 
     Node();
+
+    Node(const std::vector<int>& feature_ids, int Y): feature_ids(feature_ids), Y(Y) {}
+
     ~Node(){};
 };
 
@@ -47,7 +50,6 @@ typedef std::shared_ptr<Node> node_ptr;
 class NodeCompare {
   public:
     bool operator() (node_ptr a, node_ptr b) {
-//      return a->path_score > b->path_score;
       return a->path_score < b->path_score;
     }
 };
