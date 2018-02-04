@@ -67,13 +67,6 @@ void Corpus::read(const std::string& filename,
     std::cerr << "failed to open " << filename << std::endl;
   }
 
-  if (!label_dict->has(corpus::BOS)) {
-    label_dict->add(corpus::BOS);
-  }
-  if (!label_dict->has(corpus::EOS)) {
-    label_dict->add(corpus::EOS);
-  }
-
   std::vector< std::vector< std::string > > x;
   std::vector< std::string > y;
 
@@ -136,10 +129,9 @@ void Corpus::build_lattices(
 //      fids[j] = features;
     }
 
-    std::vector<node_ptr> nodes(fids.size()+2);
+    std::vector<node_ptr> nodes(fids.size());
     build_lattice(label_size, fids, &nodes);
 
-//    std::vector<node_ptr> nodes = build_lattice(label_size, fids);
     std::vector<node_ptr> true_path_ = true_path(nodes, yids);
 
 //    nodes_list->push_back(nodes);

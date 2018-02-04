@@ -142,8 +142,7 @@ StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
     }
   }
 
-  viterbi(nodes);
-  std::vector<node_ptr> path = backtrack(nodes);
+  std::vector<node_ptr> path = viterbi(nodes);
   return path;
 };
 
@@ -159,25 +158,16 @@ StructuredPerceptron::nbest(std::vector<node_ptr>& nodes, int beam_width) {
 
   std::vector< std::vector<node_ptr> > ret(beam_width);
   for (int i=0; i < beam_width; ++i) {
-    std::vector<node_ptr> b(nodes.size()-2);
-    node_ptr n = nbest[i]->prev;
-    for (int t=nodes.size()-2; t >= 1; --t) {
-      b[t-1] = n;
+    std::vector<node_ptr> b(nodes.size());
+    node_ptr n = nbest[i];
+    int t = 0;
+    for (int t=nodes.size()-1; t >= 0; --t) {
+      b[t] = n;
       n = n->prev;
     }
     ret[i] = b;
   }
 
-//  node_ptr best = nbest[0];
-//  int t = 0;
-//  std::vector<node_ptr> b1(nodes.size()-2);
-//  node_ptr n = best->prev;
-//  for (int t=nodes.size()-2; t >= 1; --t) {
-//    b1[t-1] = n;
-//    n = n->prev;
-//  }
-
-//  return nbest;
   return ret;
 };
 

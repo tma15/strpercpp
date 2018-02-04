@@ -9,11 +9,6 @@ namespace strpercpp {
 void build_lattice(int label_size, const std::vector< std::vector<int> >& feature_ids,
     std::vector<node_ptr>* nodes) {
 
-  node_ptr bos(new Node());
-  bos->label = corpus::BOS;
-  bos->Y = 0;
-  (*nodes)[0] = bos;
-
   for (int i=0; i < feature_ids.size(); ++i) {
     for (int j=0; j < label_size; ++j) {
       node_ptr node(new Node());
@@ -22,21 +17,16 @@ void build_lattice(int label_size, const std::vector< std::vector<int> >& featur
       node->Y = j;
 
       if (j==0) {
-        (*nodes)[i+1] = node;
+        (*nodes)[i] = node;
       } else {
         node_ptr next_node;
-        for (node_ptr n = (*nodes)[i+1]; n != nullptr; n = n->bnext) {
+        for (node_ptr n = (*nodes)[i]; n != nullptr; n = n->bnext) {
           next_node = n;
         }
         next_node->bnext = node;
       }
     }
   }
-
-  node_ptr eos(new Node());
-  eos->label = corpus::EOS;
-  eos->Y = 1;
-  (*nodes)[nodes->size()-1] = eos;
 };
 
 void print_label_seq(node_ptr n) {
@@ -61,11 +51,13 @@ void print_label_seq(node_ptr n) {
 //   curr_queue = next_queue
 std::vector<node_ptr> beamsearch(std::vector<node_ptr>& nodes, int beam_width) {
   node_ptr_queue pq;
-  pq.push(nodes[0]);
+
+  node_ptr n(new Node()); // BOS
+  pq.push(n);
 
   int len_seq = nodes.size();
 
-  for (int t=1; t < nodes.size(); ++t) {
+  for (int t=0; t < nodes.size(); ++t) {
 
     node_ptr_queue next_pq;
     node_ptr_queue next_pq_tmp;
@@ -82,14 +74,7 @@ std::vector<node_ptr> beamsearch(std::vector<node_ptr>& nodes, int beam_width) {
       }
     }
 
-//    while (next_pq.size() > beam_width) {
-//      node_ptr n = next_pq.top();
-//      next_pq.pop();
-//    }
-
-    // 次のキューがbeam_width以下、かつnext_pq_tmpが空でない間
     while (next_pq.size() < beam_width && !next_pq_tmp.empty()) {
-//      printf("next_pq:%d tmp:%d\n", next_pq.size(), next_pq_tmp.size());
       node_ptr n = next_pq_tmp.top();
       next_pq_tmp.pop();
 

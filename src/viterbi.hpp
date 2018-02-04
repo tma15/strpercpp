@@ -8,7 +8,7 @@
 namespace strpercpp {
     
 
-void viterbi(std::vector<node_ptr>& nodes);
+std::vector<node_ptr> viterbi(std::vector<node_ptr>& nodes);
 
 std::vector<node_ptr> backtrack(std::vector<node_ptr>& nodes);
 
