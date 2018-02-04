@@ -56,11 +56,6 @@ class StructuredPerceptron {
         _fit(nodes, true_path_);
       };
 
-//      void early_update(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
-
-//      void max_violation_update(std::vector<node_ptr>& nodes,
-//          std::vector< node_ptr >& true_path_);
-
       /*! learns a model
        * \param[in] nodes lattice of Node s
        * \param[in] labels the sequence of true labels
@@ -119,7 +114,6 @@ class StructuredPerceptron {
        */
       void print_w();
 
-//    private:
     protected:
       /*! the dictionary of labels */
       Dictionary label_dic;
