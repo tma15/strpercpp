@@ -171,6 +171,105 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
 };
 
 void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path) {
+  for (int i=0; i < nodes.size(); ++i) {
+    for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
+      fire(n);
+    }
+  }
+
+  for (int i=0; i < true_path.size(); ++i) {
+    fire(true_path[i]);
+  }
+  for (int i=1; i < true_path.size(); ++i) {
+    true_path[i]->path_score = true_path[i-1]->path_score + true_path[i]->score;
+  }
+
+  node_ptr_queue pq;
+  node_ptr n(new Node()); // BOS
+  pq.push(n);
+
+  std::vector<node_ptr> n_max_list;
+
+  for (int t=0; t < nodes.size(); ++t) {
+    node_ptr_queue next_pq_tmp;
+    node_ptr_queue next_pq;
+    while (!pq.empty()) {
+      node_ptr node = pq.top();
+      pq.pop();
+
+      for (node_ptr n = nodes[t]; n != nullptr; n = n->bnext) {
+        node_ptr n_ = std::make_shared<Node>(*n);
+        n_->prev = node;
+        n_->path_score = node->path_score + n_->score;
+        next_pq_tmp.push(n_);
+      }
+    }
+
+    bool true_exists = false;
+    node_ptr n_max = next_pq_tmp.top();
+    next_pq_tmp.pop();
+    next_pq.push(n_max);
+    n_max_list.push_back(n_max);
+
+    std::vector< std::vector<int> > feature_ids_n_max;
+    std::vector<int> ys_max;
+    while (n_max->prev != nullptr) {
+      ys_max.push_back(n_max->Y);
+      feature_ids_n_max.push_back(n_max->feature_ids);
+      n_max = n_max->prev;
+    }
+
+    bool is_true = true;
+    for (int k=0; k < ys_max.size(); ++k) {
+      if (ys_max[ys_max.size()-k-1] != true_path[k]->Y) {
+        is_true = false;
+      }
+    }
+
+    if (is_true) {
+      true_exists = true;
+    }
+
+    while (next_pq.size() < beam_width_-1 && !next_pq_tmp.empty()) {
+      /* if true path does not exist in beam, then update */
+      node_ptr n = next_pq_tmp.top();
+      next_pq_tmp.pop();
+      next_pq.push(n);
+
+      std::vector<int> ys;
+      while (n->prev != nullptr) {
+        ys.push_back(n->Y);
+        n = n->prev;
+      }
+
+      bool is_true = true;
+      for (int k=0; k < ys.size(); ++k) {
+        if (ys[ys.size()-k-1] != true_path[k]->Y) {
+          is_true = false;
+        }
+      }
+
+      if (is_true) {
+        true_exists = true;
+      }
+    }
+
+    if (!true_exists) {
+      int argmin = 0;
+      float min = true_path[argmin]->path_score - n_max_list[argmin]->path_score;
+      for (int j=1; j < n_max_list.size(); ++j) {
+        node_ptr z = n_max_list[j];
+        node_ptr y = true_path[j];
+        if (y->path_score - z->path_score < min) {
+          argmin = j;
+          min = j;
+        }
+      }
+      std::cout << "argmin:" << argmin << std::endl;
+      exit(1);
+    }
+    pq = next_pq;
+  }
 };
 
 

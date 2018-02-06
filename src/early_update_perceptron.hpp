@@ -52,6 +52,29 @@ class BeamEarlyUpdate: public StructuredPerceptron {
     void _fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
 };
 
+class MaxViolationUpdate: public StructuredPerceptron {
+  public:
+    MaxViolationUpdate(): beam_width_(5) {};
+
+    MaxViolationUpdate(int beam_width): beam_width_(beam_width) {};
+
+    ~MaxViolationUpdate(){};
+
+    MaxViolationUpdate(Dictionary& _feature_dic, Dictionary& _label_dic):
+      StructuredPerceptron(_feature_dic, _label_dic), beam_width_(5) {
+    };
+
+    MaxViolationUpdate(Dictionary& _feature_dic, Dictionary& _label_dic, int beam_width):
+      StructuredPerceptron(_feature_dic, _label_dic), beam_width_(beam_width) {
+    };
+   
+    void fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_) {
+      _fit(nodes, true_path_);
+    };
+
+  private:
+    int beam_width_;
+    void _fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& true_path_);
 
 };
 
