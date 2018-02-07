@@ -61,6 +61,9 @@ int main(int argc, char* argv[]) {
   } else if (update_rule == "beam-earlyupdate") {
     int beam_width = parser.get<int>("beam");
     perc = new BeamEarlyUpdate(feature_dic, label_dic, beam_width);
+  } else if (update_rule == "max-violation") {
+    int beam_width = parser.get<int>("beam");
+    perc = new MaxViolationUpdate(feature_dic, label_dic, beam_width);
   }
 
   perc->set_template(tmpl);

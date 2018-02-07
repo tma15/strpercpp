@@ -254,20 +254,41 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
       }
     }
 
+//    printf("t:%d %d\n", t, n_max_list.size());
+
     if (!true_exists) {
       int argmin = 0;
       float min = true_path[argmin]->path_score - n_max_list[argmin]->path_score;
       for (int j=1; j < n_max_list.size(); ++j) {
         node_ptr z = n_max_list[j];
         node_ptr y = true_path[j];
-        if (y->path_score - z->path_score < min) {
+        float diff = y->path_score - z->path_score;
+        if (diff < min) {
           argmin = j;
-          min = j;
+          min = diff;
         }
       }
-      std::cout << "argmin:" << argmin << std::endl;
-      exit(1);
+
+//      printf("t:%d argmin:%d\n", t, argmin);
+
+      for (int j=0; j <= argmin; ++j) {
+        node_ptr n = true_path[j];
+        for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
+          int fid = *it;
+          this->w(n->Y, fid) += 1.;
+        }
+      }
+
+      for (node_ptr n = n_max_list[argmin]; n->prev != nullptr; n = n->prev) {
+        for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
+          int fid = *it;
+          this->w(n->Y, fid) -= 1.;
+        }
+      }
+
+      break;
     }
+
     pq = next_pq;
   }
 };
