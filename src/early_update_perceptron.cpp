@@ -188,7 +188,10 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
   node_ptr n(new Node()); // BOS
   pq.push(n);
 
-  std::vector<node_ptr> n_max_list;
+  node_ptr n_max;
+
+  int argmin;
+  float min;
 
   for (int t=0; t < nodes.size(); ++t) {
     node_ptr_queue next_pq_tmp;
@@ -206,17 +209,29 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
     }
 
     bool true_exists = false;
-    node_ptr n_max = next_pq_tmp.top();
+    node_ptr n_max_t = next_pq_tmp.top();
     next_pq_tmp.pop();
-    next_pq.push(n_max);
-    n_max_list.push_back(n_max);
+    next_pq.push(n_max_t);
+
+    float diff = true_path[t]->path_score - n_max_t->path_score;
+    if (t == 0) {
+      argmin = t;
+      min = diff;
+      n_max = n_max_t;
+    }
+
+    if (diff < min) {
+      argmin = t;
+      min = diff;
+      n_max = n_max_t;
+    }
 
     std::vector< std::vector<int> > feature_ids_n_max;
     std::vector<int> ys_max;
-    while (n_max->prev != nullptr) {
-      ys_max.push_back(n_max->Y);
-      feature_ids_n_max.push_back(n_max->feature_ids);
-      n_max = n_max->prev;
+    while (n_max_t->prev != nullptr) {
+      ys_max.push_back(n_max_t->Y);
+      feature_ids_n_max.push_back(n_max_t->feature_ids);
+      n_max_t = n_max_t->prev;
     }
 
     bool is_true = true;
@@ -257,20 +272,6 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
 //    printf("t:%d %d\n", t, n_max_list.size());
 
     if (!true_exists) {
-      int argmin = 0;
-      float min = true_path[argmin]->path_score - n_max_list[argmin]->path_score;
-      for (int j=1; j < n_max_list.size(); ++j) {
-        node_ptr z = n_max_list[j];
-        node_ptr y = true_path[j];
-        float diff = y->path_score - z->path_score;
-        if (diff < min) {
-          argmin = j;
-          min = diff;
-        }
-      }
-
-//      printf("t:%d argmin:%d\n", t, argmin);
-
       for (int j=0; j <= argmin; ++j) {
         node_ptr n = true_path[j];
         for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
@@ -279,7 +280,7 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
         }
       }
 
-      for (node_ptr n = n_max_list[argmin]; n->prev != nullptr; n = n->prev) {
+      for (node_ptr n = n_max; n->prev != nullptr; n = n->prev) {
         for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
           int fid = *it;
           this->w(n->Y, fid) -= 1.;
