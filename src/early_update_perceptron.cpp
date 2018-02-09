@@ -45,11 +45,13 @@ void GreedyEarlyUpdate::_fit(std::vector<node_ptr>& nodes,
 //              << " true:" << true_path[i]->Y << std::endl;
 
     if (best_n_curr->Y != true_path[i]->Y) {
+      n_update_ += 1;
       for (int j=0; j <= i; ++j) {
         node_ptr node = true_path[j];
         for (auto it = node->feature_ids.begin(); it != node->feature_ids.end(); it++) {
           int fid = *it;
           this->w(node->Y, fid) += 1.;
+          this->w_a_(node->Y, fid) += n_update_;
         }
       }
 
@@ -57,6 +59,7 @@ void GreedyEarlyUpdate::_fit(std::vector<node_ptr>& nodes,
         for (auto it = node->feature_ids.begin(); it != node->feature_ids.end(); it++) {
           int fid = *it;
           this->w(node->Y, fid) -= 1.;
+          this->w_a_(node->Y, fid) -= n_update_;
         }
       }
       break;
@@ -150,11 +153,13 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
     }
 
     if (!true_exists) {
+      n_update_ += 1;
       for (int j=0; j <= t; ++j) {
         node_ptr n = true_path[j];
         for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
           int fid = *it;
           this->w(n->Y, fid) += 1.;
+          this->w_a_(n->Y, fid) += n_update_;
         }
       }
 
@@ -162,6 +167,7 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
         for (int k = 0; k < feature_ids_n_max[j].size(); ++k) {
           int fid = feature_ids_n_max[j][k];
           this->w(ys_max[j], fid) -= 1.;
+          this->w_a_(ys_max[j], fid) -= n_update_;
         }
       }
       break;
@@ -272,11 +278,13 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
 //    printf("t:%d %d\n", t, n_max_list.size());
 
     if (!true_exists) {
+      n_update_ += 1;
       for (int j=0; j <= argmin; ++j) {
         node_ptr n = true_path[j];
         for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
           int fid = *it;
           this->w(n->Y, fid) += 1.;
+          this->w_a_(n->Y, fid) += n_update_;
         }
       }
 
@@ -284,9 +292,9 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
         for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
           int fid = *it;
           this->w(n->Y, fid) -= 1.;
+          this->w_a_(n->Y, fid) -= n_update_;
         }
       }
-
       break;
     }
 

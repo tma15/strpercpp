@@ -24,7 +24,7 @@ class StructuredPerceptron {
       /*! templates of features */
       std::vector<FeatureTemplate> tmpl;
 
-      StructuredPerceptron();
+      StructuredPerceptron(){};
       ~StructuredPerceptron(){};
       StructuredPerceptron(Dictionary& feature_dic, Dictionary& label_dic);
 
@@ -123,6 +123,11 @@ class StructuredPerceptron {
 
       /*! weight vector */
       Matrix w;
+
+      /*! sum of weight vectors over epoch */
+      Matrix w_a_;
+
+      int n_update_;
 
       /*! calculates the score of a given node.
        * \param[in] node a node of which score is calculated.

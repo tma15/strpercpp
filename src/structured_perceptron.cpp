@@ -10,14 +10,12 @@
 #include "viterbi.hpp"
 
 namespace strpercpp {
-    
-
-StructuredPerceptron::StructuredPerceptron() {
-};
 
 StructuredPerceptron::StructuredPerceptron(Dictionary& _feature_dic, Dictionary& _label_dic):
-  label_dic(_label_dic), feature_dic(_feature_dic) {
+  label_dic(_label_dic), feature_dic(_feature_dic), n_update_(0) {
+
   this->w = Matrix(label_dic.size(), feature_dic.size());
+  this->w_a_ = Matrix(label_dic.size(), feature_dic.size());
 };
 
 void StructuredPerceptron::set_template(const std::vector<FeatureTemplate>& tmpl) {
@@ -64,7 +62,6 @@ void StructuredPerceptron::fit(std::vector<node_ptr>& nodes,
   }
   std::vector<node_ptr> true_path_ = true_path(nodes, true_label_ids);
   this->_fit(nodes, true_path_);
-
 };
 
 void StructuredPerceptron::_fit(std::vector<node_ptr>& nodes,
@@ -81,6 +78,7 @@ void StructuredPerceptron::_fit(std::vector<node_ptr>& nodes,
   }
 
   if (!is_correct) {
+    n_update_ += 1;
     this->update(true_path_, path);
   }
   nodes.clear();
@@ -95,6 +93,7 @@ void StructuredPerceptron::update(const std::vector<node_ptr>& true_path,
     for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
       int fid = *it;
       this->w(n->Y, fid) += 1.;
+      this->w_a_(n->Y, fid) += n_update_;
     }
   }
 
@@ -103,6 +102,7 @@ void StructuredPerceptron::update(const std::vector<node_ptr>& true_path,
     for (auto it = n->feature_ids.begin(); it != n->feature_ids.end(); it++) {
       int fid = *it;
       this->w(n->Y, fid) -= 1.;
+      this->w_a_(n->Y, fid) -= n_update_;
     }
   }
 };
@@ -185,7 +185,14 @@ void StructuredPerceptron::save(const char* filename) {
         this->tmpl[i].save(fp);
     }
 
-    this->w.save(fp);
+    for (int i=0; i < w_a_.row(); ++i) {
+      for (int j=0; j < w_a_.col(); ++j) {
+        w_a_(i, j) = w(i, j) - w_a_(i, j) / n_update_;
+      }
+    }
+    w_a_.save(fp);
+
+//    this->w.save(fp);
     fclose(fp);
 }
 
