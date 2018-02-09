@@ -35,8 +35,8 @@ $ ./download_conll2000.sh
 
 Then, a model is learned and an output is obtained as follows:
 ```sh
-$ train_strpercpp -e 3 ./data/train.txt template.conll model
-$ test_strpercpp -v model ./data/test.txt > output.txt
+$ train_strpercpp -e 10 ./data/train.txt template.conll model
+$ test_strpercpp -v 1 -d 0 model ./data/test.txt > output.txt
 ```
 
 Evaluation metrics are calculated as follows:
