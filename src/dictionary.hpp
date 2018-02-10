@@ -21,7 +21,7 @@ class Dictionary {
      *  \param[in] key
      *  \param[out] has whether key exists or not
      */
-    bool has(const std::string& key);
+    bool has(const std::string& key) const;
 
     /*! adds key to Dictionary
      *  \param[in] key

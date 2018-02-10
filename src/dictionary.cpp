@@ -7,7 +7,7 @@ namespace strpercpp {
 Dictionary::Dictionary() {
 };
 
-bool Dictionary::has(const std::string& key) {
+bool Dictionary::has(const std::string& key) const {
     return this->stoi.count(key);
 };
 
