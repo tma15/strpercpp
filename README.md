@@ -43,18 +43,18 @@ Evaluation metrics are calculated as follows:
 
 ```
 $ ./scripts/conlleval -d "        " < output.txt
-processed 47377 tokens with 23852 phrases; found: 24221 phrases; correct: 22157.
-accuracy:  95.38%; precision:  91.48%; recall:  92.89%; FB1:  92.18
-             ADJP: precision:  69.35%; recall:  70.78%; FB1:  70.06  447
-             ADVP: precision:  79.48%; recall:  80.48%; FB1:  79.98  877
-            CONJP: precision:  36.36%; recall:  44.44%; FB1:  40.00  11
+processed 47377 tokens with 23852 phrases; found: 23843 phrases; correct: 22295.
+accuracy:  95.85%; precision:  93.51%; recall:  93.47%; FB1:  93.49
+             ADJP: precision:  77.54%; recall:  74.89%; FB1:  76.19  423
+             ADVP: precision:  83.70%; recall:  80.02%; FB1:  81.82  828
+            CONJP: precision:  55.56%; recall:  55.56%; FB1:  55.56  9
              INTJ: precision: 100.00%; recall:  50.00%; FB1:  66.67  1
               LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
-               NP: precision:  91.22%; recall:  92.92%; FB1:  92.06  12654
-               PP: precision:  96.74%; recall:  97.92%; FB1:  97.32  4870
-              PRT: precision:  77.68%; recall:  82.08%; FB1:  79.82  112
-             SBAR: precision:  88.01%; recall:  85.05%; FB1:  86.50  517
-               VP: precision:  91.91%; recall:  93.37%; FB1:  92.63  4732
+               NP: precision:  93.75%; recall:  93.70%; FB1:  93.72  12415
+               PP: precision:  96.87%; recall:  97.92%; FB1:  97.40  4863
+              PRT: precision:  77.98%; recall:  80.19%; FB1:  79.07  109
+             SBAR: precision:  88.27%; recall:  85.79%; FB1:  87.01  520
+               VP: precision:  93.56%; recall:  93.90%; FB1:  93.73  4675
 ```
 
 Results of existing models are listed in [this page](https://www.clips.uantwerpen.be/conll2000/chunking/).
