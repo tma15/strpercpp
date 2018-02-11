@@ -15,7 +15,9 @@ StructuredPerceptron::StructuredPerceptron(Dictionary& _feature_dic, Dictionary&
   label_dic(_label_dic), feature_dic(_feature_dic), n_update_(0) {
 
   this->w = Matrix(label_dic.size(), feature_dic.size());
+  w_trans_ = Matrix(label_dic.size(), label_dic.size());
   this->w_a_ = Matrix(label_dic.size(), feature_dic.size());
+  w_trans_a_ = Matrix(label_dic.size(), label_dic.size());
 };
 
 void StructuredPerceptron::set_template(const std::vector<FeatureTemplate>& tmpl) {
@@ -95,6 +97,10 @@ void StructuredPerceptron::update(const std::vector<node_ptr>& true_path,
       this->w(n->Y, fid) += 1.;
       this->w_a_(n->Y, fid) += n_update_;
     }
+    if (i >= 1) {
+      w_trans_(true_path[i-1]->Y, true_path[i]->Y) += 1.;
+      w_trans_a_(true_path[i-1]->Y, true_path[i]->Y) += n_update_;
+    }
   }
 
   for (int i=0; i < pred_path.size(); ++i) {
@@ -103,6 +109,10 @@ void StructuredPerceptron::update(const std::vector<node_ptr>& true_path,
       int fid = *it;
       this->w(n->Y, fid) -= 1.;
       this->w_a_(n->Y, fid) -= n_update_;
+    }
+    if (i >= 1) {
+      w_trans_(pred_path[i-1]->Y, pred_path[i]->Y) -= 1.;
+      w_trans_a_(pred_path[i-1]->Y, pred_path[i]->Y) -= n_update_;
     }
   }
 };
@@ -143,9 +153,76 @@ StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
     }
   }
 
-  std::vector<node_ptr> path = viterbi(nodes);
+//  std::vector<node_ptr> path = viterbi(nodes);
+  node_ptr n(new Node());
+
+  for (int i=0; i < nodes.size(); ++i) {
+    for (node_ptr curr_n = nodes[i]; curr_n != nullptr; curr_n = curr_n->bnext) {
+      node_ptr best_node;
+      float best_score;
+      bool is_new = true;
+      for (node_ptr prev_n = n; prev_n != nullptr; prev_n = prev_n->bnext) {
+        float score = prev_n->path_score + curr_n->score;
+        if (i > 0) {
+
+          if (prev_n->Y < label_dic.size() && curr_n->Y < label_dic.size()) {
+            score += w_trans_[prev_n->Y][curr_n->Y];
+          }
+        }
+
+        if (score > best_score || is_new) {
+          best_score = score;
+          best_node = prev_n;
+          is_new = false;
+        }
+      }
+
+      if (is_new) {
+        std::cerr << "best node is not selected." << std::endl;
+        exit(1);
+      }
+
+      curr_n->prev = best_node;
+      curr_n->path_score = best_score;
+    }
+    n = nodes[i];
+  }
+
+  node_ptr eos(new Node());
+
+  node_ptr best_node;
+  float best_score;
+  bool is_new = true;
+  for (node_ptr prev_n = n; prev_n != nullptr; prev_n = prev_n->bnext) {
+    float score = prev_n->path_score + eos->score;
+    if (score > best_score || is_new) {
+      best_score = score;
+      best_node = prev_n;
+      is_new = false;
+    }
+  }
+
+  if (is_new) {
+    std::cerr << "best node is not selected." << std::endl;
+    exit(1);
+  }
+
+  eos->prev = best_node;
+  eos->path_score = best_score;
+
+  // backtrack
+  int size_path = nodes.size();
+  std::vector<node_ptr> path(size_path);
+
+  node_ptr node = eos;
+  node = node->prev;
+  for (int i = size_path - 1; i >= 0; --i) {
+    path[i] = node;
+    node = node->prev;
+  }
   return path;
 };
+
 
 std::vector< std::vector<node_ptr> >
 StructuredPerceptron::nbest(std::vector<node_ptr>& nodes, int beam_width) {
@@ -192,6 +269,15 @@ void StructuredPerceptron::save(const char* filename) {
     }
     w_a_.save(fp);
 
+    for (int i=0; i < w_trans_a_.row(); ++i) {
+      for (int j=0; j < w_trans_a_.col(); ++j) {
+        w_trans_a_(i, j) = w_trans_(i, j) - w_trans_a_(i, j) / n_update_;
+      }
+    }
+
+//    w_trans_.save(fp);
+    w_trans_a_.save(fp);
+
 //    this->w.save(fp);
     fclose(fp);
 }
@@ -211,6 +297,7 @@ void StructuredPerceptron::load(const char* filename) {
     }
 
     this->w.load(fp);
+    w_trans_.load(fp);
     fclose(fp);
 }
 

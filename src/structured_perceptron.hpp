@@ -124,8 +124,12 @@ class StructuredPerceptron {
       /*! weight vector */
       Matrix w;
 
+      Matrix w_trans_;
+
       /*! sum of weight vectors over epoch */
       Matrix w_a_;
+
+      Matrix w_trans_a_;
 
       int n_update_;
 
