@@ -60,7 +60,8 @@ Corpus::Corpus() {
 void Corpus::read(const std::string& filename,
     Dictionary* feature_dict, Dictionary* label_dict,
     std::vector< std::vector< std::vector< std::string > > >* sequences,
-    std::vector< std::vector< std::string > >* labels) {
+    std::vector< std::vector< std::string > >* labels,
+    bool train) {
   std::ifstream ifs(filename);
 
   if (ifs.fail()) {
@@ -94,7 +95,8 @@ void Corpus::read(const std::string& filename,
       std::string label = elems[size_elem - 1];
       y.push_back(label);
 
-      if (!label_dict->has(label)) {
+      if (!label_dict->has(label) && train) {
+//      if (!label_dict->has(label)) {
         label_dict->add(label);
       }
     }
@@ -116,7 +118,11 @@ void Corpus::build_lattices(
     std::vector< std::vector<int> > fids(sequences[i].size());
     std::vector<int> yids(sequences[i].size());
     for (int j=0; j < sequences[i].size(); ++j) {
-      yids[j] = label_dict.geti(labels[i][j]);
+      if (label_dict.has(labels[i][j])) {
+        yids[j] = label_dict.geti(labels[i][j]);
+      } else {
+        yids[j] = -1;
+      }
 
       std::vector<int> features;
       extract_features(tmpl, feature_dict, sequences[i], j, train, &features);

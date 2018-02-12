@@ -24,7 +24,7 @@ void eval(std::string test_file,
 
   Corpus corpus;
 
-  corpus.read(test_file, &feature_dic, &label_dic, &sequences, &labels);
+  corpus.read(test_file, &feature_dic, &label_dic, &sequences, &labels, false);
   
   bool train = false;
   std::vector< std::vector<node_ptr> > nodes_list(sequences.size());
@@ -37,7 +37,7 @@ void eval(std::string test_file,
           &true_path_list,
           train);
 
-//  printf("labelsize:%d\n", label_dic.size());
+  std::cerr << "label size:" << label_dic.size() << std::endl;
 
   int n_correct_sent = 0;
   int n_sent = sequences.size();
@@ -55,24 +55,10 @@ void eval(std::string test_file,
         std::vector< std::vector<node_ptr> > ys = perc.nbest(nodes, beam_width);
         y = ys[0];
     }
-//    std::vector<node_ptr> yg = perc.predict(nodes);
-
-//    std::vector<node_ptr> y = perc.nbest(nodes, beam_width);
-//    node_ptr best = y[0];
-
-//    int t = 0;
-//    std::vector<node_ptr> b1(nodes.size()-2);
-//    node_ptr n = best->prev;
-//    for (int t=nodes.size()-2; t >= 1; --t) {
-//      b1[t-1] = n;
-//      n = n->prev;
-//    }
 
     bool is_correct = true;
     for (int j=0; j < y.size(); ++j) {
       int ilabel = y[j]->Y;
-//    for (int j=0; j < b1.size(); ++j) {
-//      int ilabel = b1[j]->Y;
 
       n_tok += 1;
 
@@ -117,7 +103,7 @@ int main(int argc, char* argv[]) {
   argparse::ArgParser parser;
   parser.add_argument("-v", "0", "verbose mode");
   parser.add_argument("-b", "width of beam");
-  parser.add_argument("-d", "decoding method");
+  parser.add_argument("-d", "0", "decoding method");
   parser.add_argument("model_file", "model file");
   parser.add_argument("test_file", "test file");
   parser.parse_args(argc, argv);

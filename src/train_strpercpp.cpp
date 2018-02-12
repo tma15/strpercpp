@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 
   std::vector<FeatureTemplate> tmpl = read_template_file(template_file.c_str());
   Corpus corpus;
-  corpus.read(train_file, &feature_dic, &label_dic, &sequences, &labels);
+  corpus.read(train_file, &feature_dic, &label_dic, &sequences, &labels, true);
 
   bool train = true;
   std::vector< std::vector<node_ptr> > nodes_list(sequences.size());

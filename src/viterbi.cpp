@@ -92,27 +92,23 @@ std::vector<node_ptr>
 true_path(std::vector<node_ptr>& nodes,
     const std::vector<int>& true_label_ids) {
 
-//  int size_path = nodes.size() - 2;
   int size_path = nodes.size();
   std::vector<node_ptr> path(size_path);
 
   for (int k=0; k < true_label_ids.size(); ++k) {
-//    int i = k + 1;
     bool found = false;
-//    for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
     for (node_ptr n = nodes[k]; n != nullptr; n = n->bnext) {
-//      if (n->Y == true_label_ids[i-1]) {
       if (n->Y == true_label_ids[k]) {
-//        path[i-1] = n;
         path[k] = n;
         found = true;
       }
     }
+
+    // In test time, unknow label may occurs in the sequence of true label.
+    // If so, true label is replaced with -1.
     if (!found) {
-//      std::cerr << "not found in candidates: " << true_label_ids[i-1] << std::endl;
-      std::cerr << "not found in candidates: " << true_label_ids[k] << std::endl;
-      std::cout << size_path << " " << true_label_ids.size() << std::endl;
-      exit(1);
+      std::cerr << "true label does not exist in set of labels" << std::endl;
+      path[k] = node_ptr(new Node({}, -1));
     }
   }
   return path;

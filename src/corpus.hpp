@@ -41,7 +41,8 @@ class Corpus {
       const std::string& filename,
       Dictionary* feature_dict, Dictionary* label_dict,
       std::vector< std::vector< std::vector< std::string > > >* sequences,
-      std::vector< std::vector< std::string > >* labels);
+      std::vector< std::vector< std::string > >* labels,
+      bool train);
 
     void build_lattices(
       Dictionary* feature_dict,
