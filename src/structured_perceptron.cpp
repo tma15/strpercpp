@@ -88,7 +88,7 @@ void StructuredPerceptron::_fit(std::vector<node_ptr>& nodes,
 
 
 void StructuredPerceptron::update(const std::vector<node_ptr>& true_path,
-        const std::vector<node_ptr>& pred_path) {
+    const std::vector<node_ptr>& pred_path) {
 
   for (int i=0; i < true_path.size(); ++i) {
     node_ptr n = true_path[i];
@@ -121,15 +121,12 @@ std::vector<node_ptr>
 StructuredPerceptron::predict(const std::vector< std::vector<std::string> >& sequence) {
 
   bool train = false;
-  std::vector< std::vector<int> > fids;
+  std::vector< std::vector<int> > fids(sequence.size());
   for (int j=0; j < sequence.size(); ++j) {
 
     std::vector<int> features;
     extract_features(tmpl, &this->feature_dic, sequence, j, train, &features);
-
-//    std::vector<int> features = extract_features(tmpl,
-//        &this->feature_dic, sequence, j, train);
-    fids.push_back(features);
+    fids[j] = features;
   }
 
   std::vector<node_ptr> path = this->predict(fids);
@@ -164,7 +161,6 @@ StructuredPerceptron::predict(std::vector<node_ptr>& nodes) {
       for (node_ptr prev_n = n; prev_n != nullptr; prev_n = prev_n->bnext) {
         float score = prev_n->path_score + curr_n->score;
         if (i > 0) {
-
           if (prev_n->Y < label_dic.size() && curr_n->Y < label_dic.size()) {
             score += w_trans_[prev_n->Y][curr_n->Y];
           }
