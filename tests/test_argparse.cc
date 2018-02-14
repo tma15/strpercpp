@@ -13,6 +13,7 @@
 namespace {
 
 using namespace strpercpp;
+using namespace std;
 
 TEST(TestArgParse, ParseArgs) {
   using namespace argparse;
@@ -20,11 +21,14 @@ TEST(TestArgParse, ParseArgs) {
 
 
   int argc = 6;
-  char* argv[] = {(char*)"train_strpercpp", (char*)"-e",
-    (char*)"10", (char*)"train.txt", (char*)"template", (char*)"model"};
+  char* argv[] = {(char*)"train_strpercpp",
+    (char*)"-e", (char*)"10", 
+    (char*)"--verbose",
+    (char*)"train.txt", (char*)"template", (char*)"model"};
 
   parser.add_argument("-e", "10", "number of epoch");
   parser.add_argument("--update", "0", "updating rule");
+  parser.add_argument("--verbose", argparse::action_type::store_true, "updating rule");
   parser.add_argument("train_file", "a");
   parser.add_argument("template_file", "b");
   parser.add_argument("model_file", "c");
@@ -38,17 +42,23 @@ TEST(TestArgParse, ParseArgs) {
   int got2 = parser.get<int>("update");
   EXPECT_EQ(expected2, got2);
 
-  std::string expected3 = "train.txt";
-  std::string got3 = parser.get<std::string>("train_file");
+  bool expected3 = true;
+  int got3 = parser.get<bool>("verbose");
   EXPECT_EQ(expected3, got3);
 
-  std::string expected4 = "template";
-  std::string got4 = parser.get<std::string>("template_file");
+  std::string expected4 = "train.txt";
+  std::string got4 = parser.get<std::string>("train_file");
   EXPECT_EQ(expected4, got4);
+
+  std::string expected5 = "template";
+  std::string got5 = parser.get<std::string>("template_file");
+  EXPECT_EQ(expected5, got5);
 }
 
 
-void test_lattice() {
+TEST(TestViterbi,  Viterbi) {
+//void test_lattice() {
+  std::cout << "VITERBI" << std::endl;
   Node node;
 
   int len_seq = 4;
@@ -57,23 +67,26 @@ void test_lattice() {
   int num_label = 4;
 
   // BOS
-  node_ptr bos(new Node());
-  bos->Y = 0;
-  nodes[0] = bos;
+//  node_ptr bos(new Node());
+//  bos->Y = 0;
+//  nodes[0] = bos;
 
   // internal nodes
-  for (int i=1; i < len_seq-1; ++i) {
+//  for (int i=1; i < len_seq-1; ++i) {
+  for (int i=0; i < len_seq; ++i) {
 
     // j = 0
     node_ptr node(new Node());
     node->score = 0;
     node->Y = 0;
     nodes[i] = node;
+//    cout << "t:" << i << " j:" << 0 << " score:" << node->score << std::endl;
 
     for (int j=1; j < num_label; ++j) {
       node_ptr node(new Node());
       node->score = j;
       node->Y = j;
+//      cout << "t:" << i << " j:" << j << " score:" << node->score << std::endl;
 
       node_ptr next_node;
       for (node_ptr n = nodes[i]; n != nullptr; n = n->bnext) {
@@ -84,19 +97,23 @@ void test_lattice() {
   }
 
   // EOS
-  node_ptr eos(new Node());
-  eos->Y = num_label;
-  nodes[nodes.size()-1] = eos;
+//  node_ptr eos(new Node());
+//  eos->Y = num_label;
+//  nodes[nodes.size()-1] = eos;
 
-//  viterbi(nodes);
+//  std::vector<node_ptr> p = viterbi2(nodes);
+//  for (int i=0; i < p.size(); ++i) {
+//    cout << "i:" << i << " " << p[i]->Y << endl;
+//    EXPECT_EQ(p[i]->Y, 3);
+//  }
 
-  int beam_width = 2;
-  std::vector<node_ptr> nbest = beamsearch(nodes, beam_width);
-  for (int i=0; i < beam_width; ++i) {
-    node_ptr n = nbest[i];
-    printf("%d path score:%f\n", i, n->path_score);
-    print_label_seq(n);
-  }
+//  int beam_width = 2;
+//  std::vector<node_ptr> nbest = beamsearch(nodes, beam_width);
+//  for (int i=0; i < beam_width; ++i) {
+//    node_ptr n = nbest[i];
+//    printf("%d path score:%f\n", i, n->path_score);
+//    print_label_seq(n);
+//  }
 
 }
 

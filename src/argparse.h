@@ -10,6 +10,12 @@
 namespace strpercpp {
 namespace argparse {
 
+enum action_type {
+  store_const = 0,
+  store_true = 1,
+  store_false = 2,
+};
+
 template<typename src, typename trg> 
 trg lexical_cast(src v) {
   std::stringstream ss;
@@ -33,13 +39,22 @@ class Arg {
 
     Arg() {}
 
-    Arg(std::string name_): name(name_), value(""), help(""), opt("") {}
+    Arg(std::string name_): name(name_), value(""), help(""), opt(""), atype_(store_const) {}
 
     Arg(std::string name_, std::string help_, std::string opt_)
-      :name(name_), value(""), help(help_), opt(opt_) {}
+      : name(name_), value(""), help(help_), opt(opt_), atype_(store_const) {}
 
-    Arg(std::string name_, std::string value_, std::string help_,
-        std::string opt_) :name(name_), value(value_), help(help_), opt(opt_) {}
+    Arg(std::string name_, std::string value_, std::string help_, std::string opt_) 
+      :name(name_), value(value_), help(help_), opt(opt_), atype_(store_const) {}
+
+    Arg(std::string name_, std::string value_, std::string help_, std::string opt_,
+        action_type atype)
+      :name(name_), value(value_), help(help_), opt(opt_) , atype_(atype) {}
+
+    action_type atype() { return atype_; }
+
+  private:
+    action_type atype_;
 };
 
 class ArgParser {
@@ -105,6 +120,31 @@ class ArgParser {
       }
     }
 
+    void add_argument(const std::string& optname, action_type atype, const std::string& help) {
+      std::string key;
+      if (optname[0] == '-' && optname[1] == '-') { // long option
+        key = optname.substr(2, optname.size());
+      } else if (optname[0] == '-') { // short option
+        key = lexical_cast<char, std::string>(optname[1]);
+      }
+
+      std::string flag;
+      switch (atype) {
+        case store_true:
+          flag = "0";
+          break;
+        case store_false:
+          flag = "1";
+          break;
+        default:
+          break;
+      }
+
+      Arg arg(key, flag, help, optname, atype);
+      opt_args[key] = arg;
+    }
+
+
     template<typename T> 
     T get(const std::string& key) {
       std::map<std::string, Arg>::const_iterator it = opt_args.find(key);
@@ -167,9 +207,19 @@ class ArgParser {
     int add_optional_argument(int optind, const std::string& key, char* argv[]) {
       std::map<std::string, Arg>::const_iterator it = opt_args.find(key);
       if (it != opt_args.end()) {
-        optind += 1;
-        std::string value = lexical_cast<const char*, std::string>(argv[optind]);
-        opt_args[key].value = value;
+        if (opt_args[key].atype() == store_const) {
+          optind += 1;
+          std::string value = lexical_cast<const char*, std::string>(argv[optind]);
+          opt_args[key].value = value;
+        } else {
+
+          if (opt_args[key].atype() == store_true) {
+            opt_args[key].value = "1";
+          } else {
+            opt_args[key].value = "0";
+          }
+
+        }
       } else {
         std::cerr << "Unrecognized option:" << argv[optind] << std::endl;
         exit(1);
