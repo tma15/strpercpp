@@ -98,10 +98,9 @@ void eval(std::string test_file,
 
 };
 
-//int main(int argc, char const* argv[]) {
 int main(int argc, char* argv[]) {
   argparse::ArgParser parser;
-  parser.add_argument("-v", "0", "verbose mode");
+  parser.add_argument("-v", argparse::action_type::store_true, "verbose mode");
   parser.add_argument("-b", "width of beam");
   parser.add_argument("-d", "0", "decoding method");
   parser.add_argument("model_file", "model file");
