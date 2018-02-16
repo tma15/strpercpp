@@ -25,6 +25,12 @@ void GreedyEarlyUpdate::_fit(std::vector<node_ptr>& nodes,
       bool is_first = true;
       for (node_ptr prev_n = n; prev_n != nullptr; prev_n = prev_n->bnext) {
         float score = prev_n->path_score + curr_n->score;
+        if (i > 0) {
+          if (prev_n->Y < label_dic.size() && curr_n->Y < label_dic.size()) {
+            score += w_trans_[prev_n->Y][curr_n->Y];
+          }
+        }
+
         if (score > best_score || is_first) {
           best_score = score;
           best_n_prev = prev_n;
@@ -92,6 +98,12 @@ void BeamEarlyUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr>& 
         node_ptr n_ = std::make_shared<Node>(*n);
         n_->prev = node;
         n_->path_score = node->path_score + n_->score;
+        if (t > 0) {
+          if (node->Y < label_dic.size() && n_->Y < label_dic.size()) {
+            n_->path_score += w_trans_[node->Y][n_->Y];
+          }
+        }
+
         next_pq_tmp.push(n_);
       }
     }
@@ -210,6 +222,11 @@ void MaxViolationUpdate::_fit(std::vector<node_ptr>& nodes, std::vector<node_ptr
         node_ptr n_ = std::make_shared<Node>(*n);
         n_->prev = node;
         n_->path_score = node->path_score + n_->score;
+        if (t > 0) {
+          if (node->Y < label_dic.size() && n_->Y < label_dic.size()) {
+            n_->path_score += w_trans_[node->Y][n_->Y];
+          }
+        }
         next_pq_tmp.push(n_);
       }
     }
